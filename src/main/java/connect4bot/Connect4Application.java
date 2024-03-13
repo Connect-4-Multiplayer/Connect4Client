@@ -10,7 +10,9 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Starts up the Application
@@ -20,15 +22,14 @@ public class Connect4Application extends Application {
      * The main window of the application
      */
     private static Stage mainStage;
+    static Player playerConnection;
 
     /**
      * Starts the application, shows the title screen
-     *
      * @param stage The main window of the application
      */
     @Override
-    public void start(Stage stage) throws IOException {
-        Engine.loadDatabase();
+    public void start(Stage stage) throws IOException, ExecutionException, InterruptedException {
         mainStage = stage;
         mainStage.setTitle("Connect 4 AI");
         mainStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("Board.png"))));
@@ -52,7 +53,6 @@ public class Connect4Application extends Application {
 
     /**
      * Launches the application
-     *
      * @param args N/A
      */
     public static void main(String[] args) {
@@ -61,7 +61,6 @@ public class Connect4Application extends Application {
 
     /**
      * Automatically scales the elements in the gui when the widow is resized
-     *
      * @param scene
      * @param width
      * @param height

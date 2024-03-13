@@ -28,14 +28,6 @@ public class Engine {
      */
     static int[] lowerBoundValues = new int[SIZE], upperBoundValues = new int[SIZE];
     /**
-     * Cache containing the lower bounds of positions stored in the database
-     */
-    private static HashMap<Long, Byte> lowerBounds;
-    /**
-     * Cache containing the upper bounds of positions stored in the database
-     */
-    private static HashMap<Long, Byte> upperBounds;
-    /**
      * The default order to search moves in
      */
     private static final int MOVE_ORDER = 3 + (2 << 4) + (4 << 8) + (5 << 12) + (1 << 16) + (6 << 20);
@@ -99,8 +91,6 @@ public class Engine {
         int index = (int) (state % SIZE);
         beta = Math.min(beta, 21 - (movesMade >>> 1));
         alpha = Math.max(alpha, (movesMade + 1 >>> 1) - 21);
-        if (movesMade < 16 && lowerBounds.containsKey(state)) alpha = Math.max(alpha, lowerBounds.get(state));
-        if (movesMade < 16 && upperBounds.containsKey(state)) beta = Math.min(beta, upperBounds.get(state));
         if (lowerBoundCache[index] == state) alpha = Math.max(alpha, lowerBoundValues[index]);
         if (upperBoundCache[index] == state) beta = Math.min(beta, upperBoundValues[index]);
         if (alpha >= beta) return alpha;
@@ -117,7 +107,6 @@ public class Engine {
                 }
                 if (isWin(pieceLocations)) return 21 - (movesMade >>> 1);
                 int moveIndex = (int) (move % SIZE);
-                if (movesMade < 15 && upperBounds.containsKey(move)) alpha = Math.max(alpha, -upperBounds.get(move));
                 if (upperBoundCache[moveIndex] == move) alpha = Math.max(alpha, -upperBoundValues[moveIndex]);
                 if (alpha >= beta) return alpha;
                 threats += countThreats(move, pieceLocations, piece) << col * 4;
@@ -275,57 +264,5 @@ public class Engine {
             reflected += ((state >>> col * 6 & 0b111111) << (6 - col) * 6) + ((state >>> 42 + col * 3 & 0b111) << 42 + (6 - col) * 3);
         }
         return reflected;
-    }
-
-    /**
-     * Loads the beginning game database
-     */
-    public static void loadDatabase() {
-        lowerBounds = loadCache(lowerBoundCache, lowerBoundValues, "lowerBounds.bin");
-        upperBounds = loadCache(upperBoundCache, upperBoundValues, "upperBounds.bin");
-    }
-
-    /**
-     * Loads a cache containing either upper or lower bounds of the minimax values of positions
-     *
-     * @param positions Contains the positions to be cached
-     * @param bounds    Contains the bounds of the respective positions
-     * @param filename  The file containing the cache
-     * @return Cache of positions and their bounds stored in a map
-     */
-    static HashMap<Long, Byte> loadCache(long[] positions, int[] bounds, String filename) {
-        HashMap<Long, Byte> cache = new HashMap<>();
-        Arrays.fill(positions, -1);
-        try {
-            byte[] bytes = Objects.requireNonNull(Engine.class.getResourceAsStream(filename)).readAllBytes();
-            for (int i = 0; i < bytes.length; i += 9) {
-                long state = 0;
-                for (int j = i; j < i + 8; j++) state += (long) (bytes[j] & 255) << (j - i << 3);
-                byte bound = bytes[i + 8];
-                cache.put(state, bound);
-                cache.put(reflectState(state), bound);
-                cacheState(reflectState(state), bound, positions, bounds);
-                cacheState(state, bound, positions, bounds);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return cache;
-    }
-
-    /**
-     * Caches the current state along with its respective minimax bound
-     *
-     * @param state     The current state
-     * @param bound     The bound of the minimax value
-     * @param positions Stores all cached positions
-     * @param bounds    Stores the respective bounds of cached positions
-     */
-    static void cacheState(long state, int bound, long[] positions, int[] bounds) {
-        int index = (int) (state % SIZE);
-        if (positions[index] == -1 || depth(state) <= depth(positions[index])) {
-            positions[index] = state;
-            bounds[index] = bound;
-        }
     }
 }

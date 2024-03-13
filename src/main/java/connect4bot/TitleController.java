@@ -9,6 +9,9 @@ import javafx.scene.shape.Circle;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+
+import static connect4bot.Connect4Application.playerConnection;
 
 /**
  * Responsible for controlling the title screen
@@ -43,7 +46,8 @@ public class TitleController implements Initializable {
     /**
      * Starts the Connect 4 game when the start button is clicked
      */
-    public void startGame() throws IOException {
+    public void startGame() throws IOException, ExecutionException, InterruptedException {
+        playerConnection = new Player();
         Connect4Application.loadScene("connect4.fxml");
     }
 }

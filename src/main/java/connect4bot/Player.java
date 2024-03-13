@@ -11,48 +11,40 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class Player implements Closeable {
+    final static int PORT = 24554;
+    final static String HOST = "127.0.0.1";
 
     private final AsynchronousSocketChannel clientSock;
+    private int gameId;
 
-    public Player(InetAddress ip) throws IOException {
+    public Player() throws IOException, ExecutionException, InterruptedException {
         clientSock = AsynchronousSocketChannel.open();
-
-        final int PORT = 24553;
-        InetSocketAddress addr = new InetSocketAddress(ip, PORT);
-
-        clientSock.bind(addr);
+        clientSock.connect(new InetSocketAddress(HOST, PORT)).get();
+        // this.gameId = receive().get();
     }
 
-    public Future<Void> connect(SocketAddress server) {
-        return this.clientSock.connect(server);
-    }
-
-    public Future<Long> receive() throws IOException, InterruptedException, ExecutionException {
-        // TODO specify what should be the max size later (Bitboard should not be huge, but maybe we need extra data)
-        // 8 bytes for now, enough to fit the bitboard
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-
-        CompletableFuture<Long> received = new CompletableFuture<>();
+    public CompletableFuture<Integer> receive() throws IOException, InterruptedException, ExecutionException {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+        CompletableFuture<Integer> received = new CompletableFuture<>();
         clientSock.read(buffer, null, new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer integer, Void unused) {
+                System.out.println("Received move");
                 buffer.flip();
-                received.complete(buffer.getLong());
+                received.complete(buffer.getInt());
             }
 
             @Override
             public void failed(Throwable throwable, Void unused) {
                 received.completeExceptionally(throwable);
             }
-
         });
-
         return received;
     }
 
-    public Future<Integer> sendMove(int col, int gameId) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES * 2);
-        buffer.putInt(gameId);
+    public Future<Integer> sendMove(int col) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+        // buffer.putInt(gameId);
         buffer.putInt(col);
         buffer.flip();
         return clientSock.write(buffer);

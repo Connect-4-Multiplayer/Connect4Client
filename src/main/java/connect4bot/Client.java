@@ -21,7 +21,6 @@ public class Client implements Closeable {
     static final byte FIND_OPPONENT = 0;
 
     private final AsynchronousSocketChannel clientSock;
-    private int gameId;
     Connect4Controller controller;
 
     public Client() throws IOException, ExecutionException, InterruptedException {
@@ -56,7 +55,6 @@ public class Client implements Closeable {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
         if (type == MOVE) handleMove(buffer);
-        else this.gameId = buffer.getInt();
     }
 
     private void handleMove(ByteBuffer buffer) {
@@ -83,17 +81,6 @@ public class Client implements Closeable {
         buffer.flip();
         clientSock.write(buffer);
     }
-
-//    private void listenForInput() {
-//        try {
-//            playerConnection.receive().whenCompleteAsync((move, unused) -> {
-//                Platform.runLater(() -> dropPiece(move).play());
-//                listenForInput();
-//            });
-//        } catch (IOException | InterruptedException | ExecutionException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     @Override
     public void close() throws IOException {

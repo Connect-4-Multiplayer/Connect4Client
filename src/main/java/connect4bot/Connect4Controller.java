@@ -53,7 +53,7 @@ public class Connect4Controller implements Initializable {
     /**
      * Stores all spots filled during the game
      */
-    private static final byte NOT_OVER = 0, WIN = 1, LOSS = 2, DRAW = 3;
+    private static final byte WIN = 0, LOSS = 1, DRAW = 2, NOT_OVER = 3;
     private final Circle[] board = new Circle[SPOTS];
     /**
      * Highlights the spot where the user's piece will fall
@@ -154,6 +154,10 @@ public class Connect4Controller implements Initializable {
                     message.setText("DRAW!");
                 } else if (gameState != NOT_OVER) {
                     highlightWin(winningSpot, winInc);
+                    if (gameState == WIN) {
+                        message.setText("You Win!");
+                    }
+                    else message.setText("You Suck!");
                 }
             });
             drop.play();
@@ -161,15 +165,12 @@ public class Connect4Controller implements Initializable {
     }
 
     public void highlightWin(byte winningSpot, byte winInc) {
-        System.out.println(winningSpot);
-        System.out.println(winInc);
         for (Circle piece : board) {
             if (piece != null) piece.setOpacity(FADED_OPACITY);
         }
         int end = winningSpot + (winInc << 2);
         for (int spot = winningSpot; spot < end; spot += winInc) {
             board[spot].setOpacity(1);
-            System.out.println(spot);
         }
     }
 

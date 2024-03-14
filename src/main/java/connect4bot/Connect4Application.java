@@ -10,7 +10,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -22,7 +21,7 @@ public class Connect4Application extends Application {
      * The main window of the application
      */
     private static Stage mainStage;
-    static Player playerConnection;
+    static Client client;
 
     /**
      * Starts the application, shows the title screen
@@ -30,6 +29,7 @@ public class Connect4Application extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException, ExecutionException, InterruptedException {
+        client = new Client();
         mainStage = stage;
         mainStage.setTitle("Connect 4 AI");
         mainStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("Board.png"))));

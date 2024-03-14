@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
-import static connect4bot.Connect4Application.playerConnection;
+import static connect4bot.Connect4Application.client;
 
 /**
  * Responsible for controlling the title screen
@@ -47,7 +47,7 @@ public class TitleController implements Initializable {
      * Starts the Connect 4 game when the start button is clicked
      */
     public void startGame() throws IOException, ExecutionException, InterruptedException {
-        playerConnection = new Player();
+        client.findOpponent();
         Connect4Application.loadScene("connect4.fxml");
     }
 }

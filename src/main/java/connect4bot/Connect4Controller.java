@@ -18,10 +18,9 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static connect4bot.Connect4Application.playerConnection;
+import static connect4bot.Connect4Application.client;
 
 /**
  * Controllers the gui elements used when playing a game
@@ -30,7 +29,7 @@ public class Connect4Controller implements Initializable {
     /**
      * Number of rows and columns in the board
      */
-    private static final int ROWS = 6, COLUMNS = 7;
+    private static final int ROWS = 6, COLUMNS = 7, SPOTS = 42;
     /**
      * Dimensions of the board
      */
@@ -54,11 +53,8 @@ public class Connect4Controller implements Initializable {
     /**
      * Stores all spots filled during the game
      */
-    private final HashMap<Integer, Circle> spotsFilled = new HashMap<>();
-    /**
-     * Keeps track of the current state of the game
-     */
-    private Game game;
+    private static final byte NOT_OVER = 0, WIN = 1, LOSS = 2, DRAW = 3;
+    private final Circle[] board = new Circle[SPOTS];
     /**
      * Highlights the spot where the user's piece will fall
      */
@@ -89,7 +85,6 @@ public class Connect4Controller implements Initializable {
      */
     @FXML
     private Label message;
-    CompletableFuture<Integer> receiver;
 
     /**
      * Initializes the gui elements for starting the game
@@ -98,8 +93,8 @@ public class Connect4Controller implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        client.controller = this;
         moveMarker.setFill(Color.RED);
-        System.out.println(Thread.currentThread().getName());
         Shape board = new Rectangle(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT);
         for (int c = 0; c < COLUMNS; c++) {
             for (int r = 0; r < ROWS; r++) {
@@ -116,18 +111,6 @@ public class Connect4Controller implements Initializable {
         board.setFill(Color.BLUE);
         board.setMouseTransparent(true);
         backGround.getChildren().add(board);
-        openReceivingChannel();
-    }
-
-    private void openReceivingChannel() {
-        try {
-            playerConnection.receive().whenCompleteAsync((move, unused) -> {
-                Platform.runLater(() -> dropPiece(move).play());
-                openReceivingChannel();
-            });
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -144,7 +127,7 @@ public class Connect4Controller implements Initializable {
         colPane.setOnMouseExited(e -> moveMarker.setVisible(false));
         colPane.setOnMouseClicked(e0 -> {
             try {
-                playerConnection.sendMove(col);
+                client.sendMove((byte) col);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -152,46 +135,42 @@ public class Connect4Controller implements Initializable {
 //        receivePlayedColumn();
     }
 
-    private void receivePlayedColumn() throws IOException, ExecutionException, InterruptedException {
-//        CompletableFuture<Integer> column = playerConnection.receive();
-//        column.whenCompleteAsync((col, unused) -> {
-//            dropPiece(col).play();
-//            try {
-//                receivePlayedColumn();
-//            } catch (IOException | ExecutionException | InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-    }
-
-    /**
-     * Displays the result of the game
-     * @param isPlayerTurn true if the user just played the last move, false otherwise
-     */
-    private void showResult(boolean isPlayerTurn) {
-        int result = game.checkGameOver();
-        if (result == Game.DRAW) message.setText("Draw!");
-        else message.setText(isPlayerTurn ? "You Win!" : "Computer Wins!");
-        message.setVisible(true);
-        highlightWin();
-    }
-
     /**
      * Creates the animation for dropping a piece into a column
      * @param col The index of the column
      * @return The animation
      */
-    public TranslateTransition dropPiece(int col) {
-//        Circle piece = getPiece((game.movesMde & 1) == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
-//        int height = game.getHeight(col) - 1;
-        Circle piece = getPiece(Color.RED, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
-        int height = 0;
-        spotsFilled.put(col * 7 + height, piece);
-        backGround.getChildren().add(piece);
-        piece.toBack();
-        TranslateTransition drop = new TranslateTransition(Duration.seconds(0.6), piece);
-        drop.setByY(BOARD_HEIGHT - CELL_HEIGHT * height);
-        return drop;
+    public void playMove(byte col, byte colHeight, byte color, byte gameState, byte winningSpot, byte winInc) {
+        Platform.runLater(() -> {
+            Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
+            board[col * 6 + colHeight] = piece;
+            backGround.getChildren().add(piece);
+            piece.toBack();
+
+            TranslateTransition drop = new TranslateTransition(Duration.seconds(0.6), piece);
+            drop.setByY(BOARD_HEIGHT - CELL_HEIGHT * colHeight);
+            drop.setOnFinished(e -> {
+                if (gameState == DRAW) {
+                    message.setText("DRAW!");
+                } else if (gameState != NOT_OVER) {
+                    highlightWin(winningSpot, winInc);
+                }
+            });
+            drop.play();
+        });
+    }
+
+    public void highlightWin(byte winningSpot, byte winInc) {
+        System.out.println(winningSpot);
+        System.out.println(winInc);
+        for (Circle piece : board) {
+            if (piece != null) piece.setOpacity(FADED_OPACITY);
+        }
+        int end = winningSpot + (winInc << 2);
+        for (int spot = winningSpot; spot < end; spot += winInc) {
+            board[spot].setOpacity(1);
+            System.out.println(spot);
+        }
     }
 
     /**
@@ -210,15 +189,7 @@ public class Connect4Controller implements Initializable {
         return piece;
     }
 
-    /**
-     * Sets up the game for the user to start
-     */
-    public void setPlayerStarting() {
-        game = new Game(true);
-        displayEndOptions();
-        message.setText("Your Turn");
-        moveMarker.setFill(Color.RED);
-    }
+
 
     /**
      * Displays the options for ending the game
@@ -226,17 +197,6 @@ public class Connect4Controller implements Initializable {
     private void displayEndOptions() {
         startOptions.setVisible(false);
         endOptions.setVisible(true);
-    }
-
-    /**
-     * Highlights the pieces that create a win
-     */
-    public void highlightWin() {
-        HashSet<Integer> winningSpots = game.getWinningSpots();
-        if (winningSpots == null) return;
-        for (int spot : spotsFilled.keySet()) {
-            if (!winningSpots.contains(spot)) spotsFilled.get(spot).setOpacity(FADED_OPACITY);
-        }
     }
 
     /**

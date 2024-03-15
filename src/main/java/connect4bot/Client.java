@@ -1,14 +1,11 @@
 package connect4bot;
 
-import javafx.application.Platform;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -17,8 +14,9 @@ public class Client implements Closeable {
     static final String HOST = "127.0.0.1";//"71.244.148.113";
     static final int INPUT_BYTES = 7;
     static final int OUTPUT_BYTES = 6;
-    static final byte MOVE = 1;
     static final byte FIND_OPPONENT = 0;
+    static final byte MOVE_REQUEST = 1;
+    static final byte LOBBY_REQUEST = 2;
 
     private final AsynchronousSocketChannel clientSock;
     Connect4Controller controller;
@@ -54,7 +52,7 @@ public class Client implements Closeable {
     private void processServerMessage(ByteBuffer buffer) {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
-        if (type == MOVE) handleMove(buffer);
+        if (type == MOVE_REQUEST) handleMove(buffer);
     }
 
     private void handleMove(ByteBuffer buffer) {
@@ -69,18 +67,21 @@ public class Client implements Closeable {
 
     public Future<Integer> sendMove(byte col) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(OUTPUT_BYTES);
-        buffer.put(MOVE);
+        buffer.put(MOVE_REQUEST);
         buffer.put(col);
         buffer.flip();
         return clientSock.write(buffer);
     }
 
     public void findOpponent() {
-        ByteBuffer buffer = ByteBuffer.allocate(1);
-        buffer.put(FIND_OPPONENT);
-        buffer.flip();
-        clientSock.write(buffer);
+        clientSock.write(ByteBuffer.allocate(1).put(FIND_OPPONENT).flip());
     }
+
+    public void requestLobbies() {
+        clientSock.write(ByteBuffer.allocate(1).put(LOBBY_REQUEST).flip());
+    }
+
+
 
     @Override
     public void close() throws IOException {

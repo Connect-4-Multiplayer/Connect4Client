@@ -8,7 +8,6 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 
 public class Client implements Closeable {
     static final int PORT = 24454;
@@ -50,7 +49,7 @@ public class Client implements Closeable {
     private void processServerMessage(ByteBuffer buffer) {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
-        if (Request.MOVE_REQUEST.isType(type)) handleMove(buffer);
+        if (Request.MOVE.isType(type)) handleMove(buffer);
     }
 
     private void handleMove(ByteBuffer buffer) {

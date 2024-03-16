@@ -126,11 +126,7 @@ public class Connect4Controller implements Initializable {
         });
         colPane.setOnMouseExited(e -> moveMarker.setVisible(false));
         colPane.setOnMouseClicked(e0 -> {
-            try {
-                client.sendMove((byte) col);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Request.MOVE_REQUEST.sendRequest((byte) col);
         });
 //        receivePlayedColumn();
     }

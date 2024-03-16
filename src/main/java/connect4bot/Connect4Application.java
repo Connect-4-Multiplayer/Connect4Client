@@ -21,7 +21,7 @@ public class Connect4Application extends Application {
      * The main window of the application
      */
     private static Stage mainStage;
-    static Client client;
+    public static Client client;
 
     /**
      * Starts the application, shows the title screen

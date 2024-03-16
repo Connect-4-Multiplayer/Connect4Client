@@ -8,15 +8,13 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 public class Client implements Closeable {
     static final int PORT = 24454;
     static final String HOST = "127.0.0.1";//"71.244.148.113";
     static final int INPUT_BYTES = 7;
     static final int OUTPUT_BYTES = 6;
-    static final byte FIND_OPPONENT = 0;
-    static final byte MOVE_REQUEST = 1;
-    static final byte LOBBY_REQUEST = 2;
 
     private final AsynchronousSocketChannel clientSock;
     Connect4Controller controller;
@@ -52,7 +50,7 @@ public class Client implements Closeable {
     private void processServerMessage(ByteBuffer buffer) {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
-        if (type == MOVE_REQUEST) handleMove(buffer);
+        if (Request.MOVE_REQUEST.isType(type)) handleMove(buffer);
     }
 
     private void handleMove(ByteBuffer buffer) {
@@ -65,23 +63,9 @@ public class Client implements Closeable {
         controller.playMove(col, colHeight, color, gameState, winningSpot, winInc);
     }
 
-    public Future<Integer> sendMove(byte col) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(OUTPUT_BYTES);
-        buffer.put(MOVE_REQUEST);
-        buffer.put(col);
-        buffer.flip();
+    public Future<Integer> write(ByteBuffer buffer) {
         return clientSock.write(buffer);
     }
-
-    public void findOpponent() {
-        clientSock.write(ByteBuffer.allocate(1).put(FIND_OPPONENT).flip());
-    }
-
-    public void requestLobbies() {
-        clientSock.write(ByteBuffer.allocate(1).put(LOBBY_REQUEST).flip());
-    }
-
-
 
     @Override
     public void close() throws IOException {

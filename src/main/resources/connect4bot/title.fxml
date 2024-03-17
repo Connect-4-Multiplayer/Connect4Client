@@ -7,20 +7,23 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="backGround" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.TitleController">
-    <Label alignment="CENTER" prefHeight="100.0" prefWidth="750.0" text="Connect 4 AI">
+<AnchorPane fx:id="backGround" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.TitleController">
+    <Label alignment="CENTER" prefHeight="100.0" prefWidth="750.0" text="Connect 4 Multiplayer">
         <font>
-            <Font size="50.0"/>
+            <Font size="50.0" />
         </font>
     </Label>
-    <HBox alignment="CENTER" layoutX="275.0" layoutY="450.0" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
-        <Button mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="50.0" prefWidth="200.0" text="Start">
+    <HBox alignment="CENTER" layoutY="467.0" prefHeight="100.0" prefWidth="750.0" spacing="50.0">
+        <Button mnemonicParsing="false" onMouseClicked="#findLobbies" prefHeight="75.0" prefWidth="300.0" text="Join Lobby">
             <font>
-                <Font size="30.0"/>
+                <Font size="20.0" />
             </font>
         </Button>
+      <Button mnemonicParsing="false" onMouseClicked="#findOpponent" prefHeight="75.0" prefWidth="300.0" text="Find Random Opponent">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
     </HBox>
-    <Rectangle arcHeight="5.0" fill="BLUE" height="336.0" layoutX="144.0" layoutY="100.0" stroke="BLACK"
-               strokeType="INSIDE" strokeWidth="0.0" width="462.0"/>
+    <Rectangle arcHeight="5.0" fill="BLUE" height="336.0" layoutX="144.0" layoutY="100.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="462.0" />
 </AnchorPane>

@@ -134,7 +134,6 @@ public class Connect4Controller implements Initializable {
     /**
      * Creates the animation for dropping a piece into a column
      * @param col The index of the column
-     * @return The animation
      */
     public void playMove(byte col, byte colHeight, byte color, byte gameState, byte winningSpot, byte winInc) {
         Platform.runLater(() -> {
@@ -143,7 +142,7 @@ public class Connect4Controller implements Initializable {
             backGround.getChildren().add(piece);
             piece.toBack();
 
-            TranslateTransition drop = new TranslateTransition(Duration.seconds(0.6), piece);
+            TranslateTransition drop = new TranslateTransition(Duration.seconds(0.2), piece);
             drop.setByY(BOARD_HEIGHT - CELL_HEIGHT * colHeight);
             drop.setOnFinished(e -> {
                 if (gameState == DRAW) {
@@ -153,7 +152,7 @@ public class Connect4Controller implements Initializable {
                     if (gameState == WIN) {
                         message.setText("You Win!");
                     }
-                    else message.setText("You Suck!");
+                    else message.setText("You Lose!");
                 }
             });
             drop.play();

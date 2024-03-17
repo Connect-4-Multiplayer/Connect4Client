@@ -136,6 +136,7 @@ public class Connect4Controller implements Initializable {
      * @param col The index of the column
      */
     public void playMove(byte col, byte colHeight, byte color, byte gameState, byte winningSpot, byte winInc) {
+        System.out.println("Height: " + colHeight);
         Platform.runLater(() -> {
             Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
             board[col * 6 + colHeight] = piece;

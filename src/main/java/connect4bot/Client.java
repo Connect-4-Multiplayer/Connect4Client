@@ -34,8 +34,11 @@ public class Client implements Closeable {
             @Override
             public void completed(Integer integer, Void unused) {
                 try {
-                    System.out.println("recieved");
-                    processServerMessage(buffer.flip());
+                    System.out.println("RECEIVED");
+                    buffer.flip();
+                    while (buffer.hasRemaining()) {
+                        processServerMessage(buffer);
+                    }
                     receive();
                 }
                 catch (IOException | InterruptedException | ExecutionException e) {
@@ -50,7 +53,7 @@ public class Client implements Closeable {
         });
     }
 
-    private void processServerMessage(ByteBuffer buffer) {
+    private synchronized void processServerMessage(ByteBuffer buffer) {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
         if (Request.MOVE.isType(type)) handleMove(buffer);

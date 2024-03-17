@@ -6,16 +6,15 @@ import static connect4bot.Connect4Application.client;
 
 public enum Request {
 
-    FIND_OPPONENT(0, 1),
-    MOVE(1, 2),
-    LOBBY(2, 1);
+    FIND_OPPONENT(0),
+    MOVE(1),
+    LOBBY(2),
+    LOBBY_JOIN(3);
 
     final byte type;
-    final byte size;
 
-    Request(int type, int size) {
+    Request(int type) {
         this.type = (byte) type;
-        this.size = (byte) size;
     }
 
     public boolean isType(int type) {
@@ -28,11 +27,7 @@ public enum Request {
      * @throws IllegalArgumentException when the size is greater than the size of the request
      */
     public void sendRequest(byte... args) {
-        if (args.length > size) {
-            throw new IllegalArgumentException("Size is too large!");
-        }
-
-        client.write(ByteBuffer.allocate(size)
+        client.write(ByteBuffer.allocate(args.length + 1)
                 .put(type)
                 .put(args)
                 .flip()

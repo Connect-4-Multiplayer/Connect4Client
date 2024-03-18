@@ -57,7 +57,7 @@ public class Client implements Closeable {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
         if (Request.MOVE.isType(type)) handleMove(buffer);
-        else if (Request.LOBBY.isType(type)) getLobbies(buffer);
+        else if (Request.LOBBY_VIEW.isType(type)) getLobbies(buffer);
     }
 
     private void handleMove(ByteBuffer buffer) {
@@ -80,6 +80,16 @@ public class Client implements Closeable {
             lobbies.add(name.toString());
         }
         lobbyMenuController.updateLobbies(lobbies);
+    }
+
+    private void undoMove(ByteBuffer buffer) {
+        controller.undoMove(buffer.get(), buffer.get(), decodeMinimax(buffer.get(), buffer.get()));
+    }
+
+    private String decodeMinimax(byte moves, byte minimax) {
+        final int bound = 22;
+        if (minimax == 0) return "This leads to a draw";
+        return "You " + (minimax > 0 ? "win" : "lose") + " in " + (bound - moves) + " moves";
     }
 
     public Future<Integer> write(ByteBuffer buffer) {

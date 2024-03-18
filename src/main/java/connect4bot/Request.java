@@ -8,8 +8,12 @@ public enum Request {
 
     FIND_OPPONENT(0),
     MOVE(1),
-    LOBBY(2),
-    LOBBY_JOIN(3);
+    LOBBY_VIEW(2),
+    LOBBY_JOIN(3),
+    START_ANALYSIS(4),
+    ANALYZE_PREV(5),
+    ANALYZE_NEXT(6);
+
 
     final byte type;
 

@@ -46,7 +46,7 @@ public class TitleController implements Initializable {
     }
 
     public void findLobbies() throws IOException {
-        Request.LOBBY.sendRequest();
+        Request.LOBBY_VIEW.sendRequest();
         Connect4Application.loadScene("lobbyMenu.fxml");
     }
 }

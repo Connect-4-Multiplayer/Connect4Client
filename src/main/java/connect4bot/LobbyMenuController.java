@@ -30,7 +30,6 @@ public class LobbyMenuController implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         for (Node lobby : lobbies.getChildren()) {

@@ -26,22 +26,33 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
     </GridPane>
-    <HBox fx:id="startOptions" alignment="TOP_CENTER" layoutY="500.0" prefHeight="100.0" prefWidth="750.0" spacing="25.0" />
-    <Label fx:id="message" alignment="CENTER" layoutX="175.0" layoutY="400.0" prefHeight="100.0" prefWidth="400.0" text="Select Option:">
+    <HBox fx:id="endOptions" alignment="TOP_CENTER" layoutY="500.0" prefHeight="100.0" prefWidth="750.0" spacing="25.0" visible="false">
+      <children>
+           <Button mnemonicParsing="false" onMouseClicked="#playAgain" prefHeight="50.0" prefWidth="200.0" text="Play Again">
+               <font>
+                   <Font size="15.0" />
+               </font>
+           </Button>
+         <Button mnemonicParsing="false" onAction="#startAnalysis" prefHeight="50.0" prefWidth="200.0" text="Analyze Game" />
+           <Button mnemonicParsing="false" onAction="#quit" onMouseClicked="#quit" prefHeight="50.0" prefWidth="200.0" text="Quit">
+               <font>
+                   <Font size="15.0" />
+               </font>
+           </Button>
+      </children></HBox>
+    <Label fx:id="message" alignment="CENTER" layoutX="175.0" layoutY="400.0" prefHeight="100.0" prefWidth="400.0" text="Select Option:" visible="false">
         <font>
             <Font size="40.0" />
         </font>
     </Label>
-    <HBox fx:id="endOptions" alignment="TOP_CENTER" layoutX="175.0" layoutY="500.0" prefHeight="100.0" prefWidth="400.0" spacing="25.0" visible="false">
-        <Button mnemonicParsing="false" onMouseClicked="#playAgain" prefHeight="50.0" prefWidth="200.0" text="Restart">
+   <HBox fx:id="engineNavigator" alignment="TOP_CENTER" layoutX="10.0" layoutY="510.0" prefHeight="100.0" prefWidth="750.0" spacing="25.0" visible="false">
+      <children>
+         <Button mnemonicParsing="false" onMouseClicked="#playAgain" prefHeight="50.0" prefWidth="200.0" text="Back">
             <font>
-                <Font size="15.0" />
+               <Font size="15.0" />
             </font>
-        </Button>
-        <Button mnemonicParsing="false" onMouseClicked="#quit" prefHeight="50.0" prefWidth="200.0" text="Quit">
-            <font>
-                <Font size="15.0" />
-            </font>
-        </Button>
-    </HBox>
+         </Button>
+         <Button mnemonicParsing="false" onAction="#startAnalysis" prefHeight="50.0" prefWidth="200.0" text="Next" />
+      </children>
+   </HBox>
 </AnchorPane>

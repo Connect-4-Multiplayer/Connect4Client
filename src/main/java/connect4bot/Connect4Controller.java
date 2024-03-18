@@ -71,11 +71,6 @@ public class Connect4Controller implements Initializable {
     @FXML
     private GridPane grid;
     /**
-     * Options for who starts the game
-     */
-    @FXML
-    private HBox startOptions;
-    /**
      * Options that allow the user to quit or restart
      */
     @FXML
@@ -85,6 +80,8 @@ public class Connect4Controller implements Initializable {
      */
     @FXML
     private Label message;
+    @FXML
+    private HBox engineNavigator;
 
     /**
      * Initializes the gui elements for starting the game
@@ -125,10 +122,7 @@ public class Connect4Controller implements Initializable {
             moveMarker.setVisible(true);
         });
         colPane.setOnMouseExited(e -> moveMarker.setVisible(false));
-        colPane.setOnMouseClicked(e0 -> {
-            Request.MOVE.sendRequest((byte) col);
-        });
-//        receivePlayedColumn();
+        colPane.setOnMouseClicked(e0 -> Request.MOVE.sendRequest((byte) col));
     }
 
     /**
@@ -136,7 +130,6 @@ public class Connect4Controller implements Initializable {
      * @param col The index of the column
      */
     public void playMove(byte col, byte colHeight, byte color, byte gameState, byte winningSpot, byte winInc) {
-        System.out.println("Height: " + colHeight);
         Platform.runLater(() -> {
             Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
             board[col * 6 + colHeight] = piece;
@@ -186,13 +179,28 @@ public class Connect4Controller implements Initializable {
         return piece;
     }
 
+    public void startAnalysis() {
+        endOptions.setVisible(false);
+        Arrays.fill(board, null);
+    }
 
+    public void analyzeNextMove() {
+        Request.ANALYZE_NEXT.sendRequest();
+    }
+
+    public void analyzePrevMove() {
+        Request.ANALYZE_PREV.sendRequest();
+    }
+
+    public void undoMove(byte col, byte height, String minimax) {
+        board[col * 6 + height] = null;
+        message.setText(minimax);
+    }
 
     /**
      * Displays the options for ending the game
      */
     private void displayEndOptions() {
-        startOptions.setVisible(false);
         endOptions.setVisible(true);
     }
 

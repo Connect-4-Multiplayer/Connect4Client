@@ -58,16 +58,13 @@ public class Client implements Closeable {
         byte type = buffer.get();
         if (Request.MOVE.isType(type)) handleMove(buffer);
         else if (Request.LOBBY_VIEW.isType(type)) getLobbies(buffer);
+        else if (Request.ANALYZE_PREV.isType(type)) getPrevMove(buffer);
+        else if (Request.ANALYZE_NEXT.isType(type)) getNextMove(buffer);
+
     }
 
     private void handleMove(ByteBuffer buffer) {
-        byte col = buffer.get();
-        byte colHeight = buffer.get();
-        byte color = buffer.get();
-        byte gameState = buffer.get();
-        byte winningSpot = buffer.get();
-        byte winInc = buffer.get();
-        controller.playMove(col, colHeight, color, gameState, winningSpot, winInc);
+        controller.playMove(getBytes(buffer, 6));
     }
 
     private void getLobbies(ByteBuffer buffer) {
@@ -82,14 +79,26 @@ public class Client implements Closeable {
         lobbyMenuController.updateLobbies(lobbies);
     }
 
-    private void undoMove(ByteBuffer buffer) {
-        controller.undoMove(buffer.get(), buffer.get(), decodeMinimax(buffer.get(), buffer.get()));
+    private void getNextMove(ByteBuffer buffer) {
+        controller.showNextMove(getBytes(buffer, 6), decodeMinimax(buffer.get(), buffer.get()));
+    }
+
+    private void getPrevMove(ByteBuffer buffer) {
+        controller.showPrevMove(buffer.get(), buffer.get(), decodeMinimax(buffer.get(), buffer.get()));
     }
 
     private String decodeMinimax(byte moves, byte minimax) {
         final int bound = 22;
         if (minimax == 0) return "This leads to a draw";
         return "You " + (minimax > 0 ? "win" : "lose") + " in " + (bound - moves) + " moves";
+    }
+
+    private byte[] getBytes(ByteBuffer buffer, int count) {
+        byte[] bytes = new byte[count];
+        for (int i = 0; i < count; i++) {
+            bytes[i] = buffer.get();
+        }
+        return bytes;
     }
 
     public Future<Integer> write(ByteBuffer buffer) {

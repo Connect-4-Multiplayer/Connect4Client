@@ -47,7 +47,7 @@
     </Label>
    <HBox fx:id="engineNavigator" alignment="TOP_CENTER" layoutX="10.0" layoutY="510.0" prefHeight="100.0" prefWidth="750.0" spacing="25.0" visible="false">
       <children>
-         <Button mnemonicParsing="false" onMouseClicked="#playAgain" prefHeight="50.0" prefWidth="200.0" text="Back">
+         <Button mnemonicParsing="false" onMouseClicked="#analyzePrevMove" prefHeight="50.0" prefWidth="200.0" text="Back">
             <font>
                <Font size="15.0" />
             </font>

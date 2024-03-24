@@ -127,9 +127,10 @@ public class Connect4Controller implements Initializable {
 
     /**
      * Creates the animation for dropping a piece into a column
-     * @param col The index of the column
      */
-    public void playMove(byte col, byte colHeight, byte color, byte gameState, byte winningSpot, byte winInc) {
+    public void playMove(byte[] args) {
+        final byte col = args[0], colHeight = args[1], color = args[2],
+                gameState = args[3], winningSpot = args[4], winInc = args[5];
         Platform.runLater(() -> {
             Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
             board[col * 6 + colHeight] = piece;
@@ -139,6 +140,10 @@ public class Connect4Controller implements Initializable {
             TranslateTransition drop = new TranslateTransition(Duration.seconds(0.2), piece);
             drop.setByY(BOARD_HEIGHT - CELL_HEIGHT * colHeight);
             drop.setOnFinished(e -> {
+                if (gameState != NOT_OVER) {
+                    message.setVisible(true);
+                    displayEndOptions();
+                }
                 if (gameState == DRAW) {
                     message.setText("DRAW!");
                 } else if (gameState != NOT_OVER) {
@@ -181,7 +186,8 @@ public class Connect4Controller implements Initializable {
 
     public void startAnalysis() {
         endOptions.setVisible(false);
-        Arrays.fill(board, null);
+        engineNavigator.setVisible(true);
+        backGround.getChildren().removeAll(Arrays.stream(board).filter(Objects::nonNull).toList());
     }
 
     public void analyzeNextMove() {
@@ -192,9 +198,14 @@ public class Connect4Controller implements Initializable {
         Request.ANALYZE_PREV.sendRequest();
     }
 
-    public void undoMove(byte col, byte height, String minimax) {
-        board[col * 6 + height] = null;
+    public void showNextMove(byte[] args, String minimax) {
         message.setText(minimax);
+        playMove(args);
+    }
+
+    public void showPrevMove(byte col, byte height, String minimax) {
+        message.setText(minimax);
+        backGround.getChildren().remove(board[col * 6 + height]);
     }
 
     /**

@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import message.LobbyJoin;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,12 +42,14 @@ public class TitleController implements Initializable {
     }
 
     public void findOpponent() throws IOException {
-        Request.FIND_OPPONENT.sendRequest();
+        new LobbyJoin().sendJoinPublicRequest();
         Connect4Application.loadScene("connect4.fxml");
     }
 
-    public void findLobbies() throws IOException {
-        Request.LOBBY_VIEW.sendRequest();
+    public void openLobbyMenu() throws IOException {
         Connect4Application.loadScene("lobbyMenu.fxml");
+    }
+
+    public static void main(String[] args) {
     }
 }

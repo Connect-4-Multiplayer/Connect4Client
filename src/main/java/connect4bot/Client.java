@@ -1,5 +1,7 @@
 package connect4bot;
 
+import message.Message;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.*;
@@ -19,8 +21,8 @@ public class Client implements Closeable {
     static final int MAX_LOBBIES = 8;
 
     private final AsynchronousSocketChannel clientSock;
-    Connect4Controller controller;
-    LobbyMenuController lobbyMenuController;
+    public Connect4Controller controller;
+    public LobbyMenuController lobbyMenuController;
 
     public Client() throws IOException, ExecutionException, InterruptedException {
         clientSock = AsynchronousSocketChannel.open();
@@ -53,18 +55,12 @@ public class Client implements Closeable {
         });
     }
 
-    private synchronized void processServerMessage(ByteBuffer buffer) {
+    private void processServerMessage(ByteBuffer buffer) {
         System.out.println(buffer.remaining());
         byte type = buffer.get();
-        if (Request.MOVE.isType(type)) handleMove(buffer);
-        else if (Request.LOBBY_VIEW.isType(type)) getLobbies(buffer);
-        else if (Request.ANALYZE_PREV.isType(type)) getPrevMove(buffer);
-        else if (Request.ANALYZE_NEXT.isType(type)) getNextMove(buffer);
-
-    }
-
-    private void handleMove(ByteBuffer buffer) {
-        controller.playMove(getBytes(buffer, 6));
+        Message message = Message.of(type);
+        message.process(buffer);
+//        if (Message.MOVE.isType(type)) handleMove(buffer);
     }
 
     private void getLobbies(ByteBuffer buffer) {
@@ -76,12 +72,12 @@ public class Client implements Closeable {
             }
             lobbies.add(name.toString());
         }
-        lobbyMenuController.updateLobbies(lobbies);
+//        lobbyMenuController.updateLobbies(lobbies);
     }
 
-    private void getNextMove(ByteBuffer buffer) {
-        controller.showNextMove(getBytes(buffer, 6), decodeMinimax(buffer.get(), buffer.get()));
-    }
+//    private void getNextMove(ByteBuffer buffer) {
+//        controller.showNextMove(getBytes(buffer, 6), decodeMinimax(buffer.get(), buffer.get()));
+//    }
 
     private void getPrevMove(ByteBuffer buffer) {
         controller.showPrevMove(buffer.get(), buffer.get(), decodeMinimax(buffer.get(), buffer.get()));
@@ -91,14 +87,6 @@ public class Client implements Closeable {
         final int bound = 22;
         if (minimax == 0) return "This leads to a draw";
         return "You " + (minimax > 0 ? "win" : "lose") + " in " + (bound - moves) + " moves";
-    }
-
-    private byte[] getBytes(ByteBuffer buffer, int count) {
-        byte[] bytes = new byte[count];
-        for (int i = 0; i < count; i++) {
-            bytes[i] = buffer.get();
-        }
-        return bytes;
     }
 
     public Future<Integer> write(ByteBuffer buffer) {

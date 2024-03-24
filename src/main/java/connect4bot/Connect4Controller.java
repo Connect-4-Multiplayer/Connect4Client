@@ -14,6 +14,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
+import message.Move;
 
 import java.io.IOException;
 import java.net.URL;
@@ -79,7 +80,7 @@ public class Connect4Controller implements Initializable {
      * Label that displays different messages to the user
      */
     @FXML
-    private Label message;
+    public Label message;
     @FXML
     private HBox engineNavigator;
 
@@ -122,7 +123,7 @@ public class Connect4Controller implements Initializable {
             moveMarker.setVisible(true);
         });
         colPane.setOnMouseExited(e -> moveMarker.setVisible(false));
-        colPane.setOnMouseClicked(e0 -> Request.MOVE.sendRequest((byte) col));
+        colPane.setOnMouseClicked(e0 -> new Move().sendRequest((byte) col));
     }
 
     /**
@@ -188,14 +189,6 @@ public class Connect4Controller implements Initializable {
         endOptions.setVisible(false);
         engineNavigator.setVisible(true);
         backGround.getChildren().removeAll(Arrays.stream(board).filter(Objects::nonNull).toList());
-    }
-
-    public void analyzeNextMove() {
-        Request.ANALYZE_NEXT.sendRequest();
-    }
-
-    public void analyzePrevMove() {
-        Request.ANALYZE_PREV.sendRequest();
     }
 
     public void showNextMove(byte[] args, String minimax) {

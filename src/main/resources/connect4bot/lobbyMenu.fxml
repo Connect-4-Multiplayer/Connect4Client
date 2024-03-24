@@ -10,7 +10,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.LobbyMenuController">
    <children>
-      <VBox alignment="CENTER" layoutX="139.0" layoutY="305.0" prefHeight="295.0" prefWidth="449.0">
+      <VBox alignment="CENTER" layoutX="151.0" layoutY="415.0" prefHeight="171.0" prefWidth="449.0">
          <children>
             <Label alignment="TOP_CENTER" text="Enter Lobby Code:">
                <font>

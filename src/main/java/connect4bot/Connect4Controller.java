@@ -80,7 +80,7 @@ public class Connect4Controller implements Initializable {
      * Label that displays different messages to the user
      */
     @FXML
-    public Label message;
+    private Label message;
     @FXML
     private HBox engineNavigator;
 
@@ -199,6 +199,13 @@ public class Connect4Controller implements Initializable {
     public void showPrevMove(byte col, byte height, String minimax) {
         message.setText(minimax);
         backGround.getChildren().remove(board[col * 6 + height]);
+    }
+
+    public void showWaitingMessage() {
+        Platform.runLater(() -> {
+            message.setText("Waiting...");
+            message.setVisible(true);
+        });
     }
 
     /**

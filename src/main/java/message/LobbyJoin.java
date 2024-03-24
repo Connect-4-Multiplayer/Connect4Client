@@ -1,6 +1,7 @@
 package message;
 
 import connect4bot.Connect4Application;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,16 +32,17 @@ public class LobbyJoin extends Message {
         if (lobbyType == PRIVATE) {
             if (status == FAIL) client.lobbyMenuController.displayFailureLabel();
             else {
-                try {
-                    Connect4Application.loadScene("connect4.fxml");
-                } catch (IOException ignored) {
-                }
+                Connect4Application.loadScene("connect4.fxml");
             }
         }
         else {
+            Connect4Application.loadScene("connect4.fxml");
             if (status == FAIL) {
+                client.controller.showWaitingMessage();
             }
-
+            else {
+                System.out.println("Success!");
+            }
         }
     }
 }

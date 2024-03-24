@@ -1,6 +1,7 @@
 package connect4bot;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
@@ -41,14 +42,21 @@ public class Connect4Application extends Application {
      *
      * @param name The name of the scene
      */
-    public static void loadScene(String name) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Connect4Application.class.getResource(name));
-        Scene scene = new Scene(loader.load());
-        mainStage.setScene(scene);
-        mainStage.show();
-        SizeChangeListener sizeListener = new SizeChangeListener(scene, scene.getWidth(), scene.getHeight());
-        scene.widthProperty().addListener(sizeListener);
-        scene.heightProperty().addListener(sizeListener);
+    public static void loadScene(String name) {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(Connect4Application.class.getResource(name));
+            Scene scene = null;
+            try {
+                scene = new Scene(loader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            mainStage.setScene(scene);
+            mainStage.show();
+            SizeChangeListener sizeListener = new SizeChangeListener(scene, scene.getWidth(), scene.getHeight());
+            scene.widthProperty().addListener(sizeListener);
+            scene.heightProperty().addListener(sizeListener);
+        });
     }
 
     /**

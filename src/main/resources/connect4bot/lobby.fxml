@@ -11,8 +11,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.Lobby">
+<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.LobbyController">
    <children>
       <VBox alignment="CENTER" prefHeight="600.0" prefWidth="750.0" spacing="30.0">
          <children>
@@ -93,9 +92,9 @@
                   </VBox>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" text="Ready">
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Ready">
                <font>
-                  <Font size="30.0" />
+                  <Font size="20.0" />
                </font>
             </Button>
          </children>

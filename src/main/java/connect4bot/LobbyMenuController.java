@@ -18,8 +18,13 @@ public class LobbyMenuController implements Initializable {
     @FXML
     private Label failLabel;
 
+    public void createLobby() {
+        new LobbyJoin().sendCreatePrivateRequest();
+        Connect4Application.loadScene("lobby.fxml");
+    }
+
     public void submitForm() throws IOException {
-        new LobbyJoin().sendJoinRequest(Short.parseShort(lobbyCode.getText(), 16));
+        new LobbyJoin().sendRequest(Short.parseShort(lobbyCode.getText(), 16));
     }
 
     public void displayFailureLabel() {

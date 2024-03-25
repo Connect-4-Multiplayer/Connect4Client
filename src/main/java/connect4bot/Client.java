@@ -23,6 +23,7 @@ public class Client implements Closeable {
     private final AsynchronousSocketChannel clientSock;
     public Connect4Controller controller;
     public LobbyMenuController lobbyMenuController;
+    public Lobby lobby;
 
     public Client() throws IOException, ExecutionException, InterruptedException {
         clientSock = AsynchronousSocketChannel.open();
@@ -34,8 +35,9 @@ public class Client implements Closeable {
         ByteBuffer buffer = ByteBuffer.allocate(INPUT_BYTES);
         clientSock.read(buffer, null, new CompletionHandler<Integer, Void>() {
             @Override
-            public void completed(Integer integer, Void unused) {
+            public void completed(Integer bytes, Void unused) {
                 try {
+                    if (bytes == -1) clientSock.close();
                     System.out.println("RECEIVED");
                     buffer.flip();
                     while (buffer.hasRemaining()) {

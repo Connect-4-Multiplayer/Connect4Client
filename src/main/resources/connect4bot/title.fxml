@@ -14,7 +14,7 @@
         </font>
     </Label>
     <HBox alignment="CENTER" layoutY="467.0" prefHeight="100.0" prefWidth="750.0" spacing="50.0">
-        <Button mnemonicParsing="false" onMouseClicked="#openLobbyMenu" prefHeight="75.0" prefWidth="300.0" text="Join Lobby">
+        <Button mnemonicParsing="false" onMouseClicked="#openLobbyMenu" prefHeight="75.0" prefWidth="300.0" text="Create/Join Lobby">
             <font>
                 <Font size="20.0" />
             </font>

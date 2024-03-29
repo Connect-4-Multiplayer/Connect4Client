@@ -1,20 +1,20 @@
-package connect4bot;
+package connect4bot.controllers;
 
+import connect4bot.Connect4Application;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import message.LobbyJoin;
+import connect4bot.message.LobbyJoin;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * Responsible for controlling the title screen
  */
-public class TitleController implements Initializable {
+public class TitleController extends Controller implements Initializable {
     /**
      * The background of the title screen
      */
@@ -29,6 +29,7 @@ public class TitleController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Connect4Application.currController = this;
         final int OFFSET_X = 177, OFFSET_Y = 408, CELL_WIDTH = 66, CELL_HEIGHT = 56, ROWS = 6, COLS = 7;
         final int[] HEIGHTS = {0, 5, 1, 6, 4, 2, 1}, PARITIES = {0, 1, 0, 0, 1, 0, 0};
         for (int c = 0; c < COLS; c++) {
@@ -41,12 +42,12 @@ public class TitleController implements Initializable {
         }
     }
 
-    public void findOpponent() throws IOException {
+    public void findOpponent() {
         new LobbyJoin().sendJoinPublicRequest();
         Connect4Application.loadScene("connect4.fxml");
     }
 
-    public void openLobbyMenu() throws IOException {
+    public void openLobbyMenu() {
         Connect4Application.loadScene("lobbyMenu.fxml");
     }
 

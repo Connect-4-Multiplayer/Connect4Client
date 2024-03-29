@@ -10,17 +10,25 @@ public class Lobby {
     public byte increment = 0;
     public byte isUnlimited = 0;
     public short code;
+    public String hostName;
+    public String guestName;
 
     public Lobby(short code) {
         this.code = code;
     }
 
-    public Lobby(ByteBuffer buffer) {
+    public Lobby(ByteBuffer buffer, String guestName) {
         isPublic = buffer.get();
         turnOrder = buffer.get();
         nextOrder = buffer.get();
         startTime = (short) ((buffer.get() << 8) + buffer.get());
         increment = buffer.get();
         isUnlimited = buffer.get();
+        StringBuilder name = new StringBuilder();
+        while (buffer.hasRemaining()) {
+            name.append((char) ((buffer.get() << 8) + buffer.get()));
+        }
+        hostName = name.toString();
+        this.guestName = guestName;
     }
 }

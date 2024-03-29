@@ -11,10 +11,15 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.LobbyController">
+<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.controllers.LobbyController">
    <children>
       <VBox alignment="CENTER" prefHeight="600.0" prefWidth="750.0" spacing="30.0">
          <children>
+            <Label fx:id="codeLabel" alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
             <Label alignment="CENTER" prefHeight="100.0" prefWidth="600.0" text="Host vs. Guest">
                <font>
                   <Font size="50.0" />

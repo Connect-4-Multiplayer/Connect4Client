@@ -1,4 +1,4 @@
-package message;
+package connect4bot.message;
 
 import java.nio.ByteBuffer;
 

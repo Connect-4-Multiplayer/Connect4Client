@@ -1,5 +1,6 @@
 package connect4bot;
 
+import connect4bot.controllers.Controller;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -23,6 +24,7 @@ public class Connect4Application extends Application {
      */
     private static Stage mainStage;
     public static Client client;
+    public static Controller currController;
 
     /**
      * Starts the application, shows the title screen
@@ -45,7 +47,7 @@ public class Connect4Application extends Application {
     public static void loadScene(String name) {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(Connect4Application.class.getResource(name));
-            Scene scene = null;
+            Scene scene;
             try {
                 scene = new Scene(loader.load());
             } catch (IOException e) {

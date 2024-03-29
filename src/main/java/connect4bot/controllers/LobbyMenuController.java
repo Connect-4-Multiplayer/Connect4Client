@@ -1,18 +1,17 @@
-package connect4bot;
+package connect4bot.controllers;
 
+import connect4bot.Connect4Application;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import message.LobbyJoin;
+import connect4bot.message.LobbyJoin;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static connect4bot.Connect4Application.client;
-
-public class LobbyMenuController implements Initializable {
+public class LobbyMenuController extends Controller implements Initializable {
     @FXML
     private TextField lobbyCode;
     @FXML
@@ -37,6 +36,6 @@ public class LobbyMenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        client.lobbyMenuController = this;
+        Connect4Application.currController = this;
     }
 }

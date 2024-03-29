@@ -1,5 +1,6 @@
-package connect4bot;
+package connect4bot.controllers;
 
+import connect4bot.Connect4Application;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -14,19 +15,17 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
-import message.Move;
+import connect4bot.message.Move;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static connect4bot.Connect4Application.client;
-
 /**
  * Controllers the gui elements used when playing a game
  */
-public class Connect4Controller implements Initializable {
+public class Connect4Controller extends Controller implements Initializable {
     /**
      * Number of rows and columns in the board
      */
@@ -91,7 +90,7 @@ public class Connect4Controller implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        client.controller = this;
+        Connect4Application.currController = this;
         moveMarker.setFill(Color.RED);
         Shape board = new Rectangle(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT);
         for (int c = 0; c < COLUMNS; c++) {

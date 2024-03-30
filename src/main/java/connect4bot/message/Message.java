@@ -7,10 +7,11 @@ import static connect4bot.Connect4Application.client;
 public abstract class Message {
     static final byte LOBBY_JOIN = 0;
     static final byte MOVE = 1;
-    static final byte SET_READY = 2;
+    static final byte PLAYER_SELECTION = 2;
     byte type;
 
     public static Message of(byte type) {
+        System.out.println("Type: " + type);
         return switch (type) {
             case LOBBY_JOIN -> new LobbyJoin();
             case MOVE -> new Move();
@@ -29,6 +30,10 @@ public abstract class Message {
                 .put(args)
                 .flip()
         );
+    }
+
+    public ByteBuffer constructMessage(int size, byte...args) {
+        return ByteBuffer.allocate(size).put(type).put(args);
     }
 
     byte[] getBytes(ByteBuffer buffer, int count) {

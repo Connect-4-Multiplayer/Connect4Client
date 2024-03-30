@@ -45,20 +45,18 @@ public class Connect4Application extends Application {
      * @param name The name of the scene
      */
     public static void loadScene(String name) {
-        Platform.runLater(() -> {
-            FXMLLoader loader = new FXMLLoader(Connect4Application.class.getResource(name));
-            Scene scene;
-            try {
-                scene = new Scene(loader.load());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            mainStage.setScene(scene);
-            mainStage.show();
-            SizeChangeListener sizeListener = new SizeChangeListener(scene, scene.getWidth(), scene.getHeight());
-            scene.widthProperty().addListener(sizeListener);
-            scene.heightProperty().addListener(sizeListener);
-        });
+        FXMLLoader loader = new FXMLLoader(Connect4Application.class.getResource(name));
+        Scene scene;
+        try {
+            scene = new Scene(loader.load());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        mainStage.setScene(scene);
+        mainStage.show();
+        SizeChangeListener sizeListener = new SizeChangeListener(scene, scene.getWidth(), scene.getHeight());
+        scene.widthProperty().addListener(sizeListener);
+        scene.heightProperty().addListener(sizeListener);
     }
 
     /**

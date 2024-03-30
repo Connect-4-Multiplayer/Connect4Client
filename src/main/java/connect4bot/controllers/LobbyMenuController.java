@@ -19,7 +19,6 @@ public class LobbyMenuController extends Controller implements Initializable {
 
     public void createLobby() {
         new LobbyJoin().sendCreatePrivateRequest();
-        Connect4Application.loadScene("lobby.fxml");
     }
 
     public void submitForm() throws IOException {

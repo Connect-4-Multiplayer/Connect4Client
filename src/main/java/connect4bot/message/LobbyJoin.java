@@ -14,8 +14,8 @@ import static connect4bot.Connect4Application.client;
 public class LobbyJoin extends Message {
     static final short PUBLIC_CODE = Short.MAX_VALUE;
     static final short CREATE_PRIVATE = Short.MIN_VALUE;
-    private final byte NO_OPPONENT = 0, OPPONENT_FOUND = 1, LOBBY_CREATED = 2;
-    private final byte PUBLIC = 1;
+    private static final byte OPPONENT_NOT_FOUND = 0, OPPONENT_FOUND = 1, LOBBY_CREATED = 2;
+    private static final byte PUBLIC = 1;
 
     public LobbyJoin() {
         this.type = LOBBY_JOIN;
@@ -35,29 +35,46 @@ public class LobbyJoin extends Message {
 
     @Override
     public void process(ByteBuffer buffer) {
+        byte messageCode = buffer.get();
+        System.out.println("Message Code: " + messageCode);
+        switch (messageCode) {
+            case OPPONENT_NOT_FOUND -> handleOpponentNotFound(buffer.get());
+            case OPPONENT_FOUND -> handleOpponentFound(buffer);
+            case LOBBY_CREATED -> handleLobbyCreated(buffer.getShort());
+        }
+    }
+
+    private void handleOpponentNotFound(byte lobbyType) {
         Platform.runLater(() -> {
-            byte messageCode = buffer.get();
-            switch (messageCode) {
-                case NO_OPPONENT -> {
-                    if (buffer.get() == PUBLIC) {
-                        Connect4Application.loadScene("connect4.fxml");
-                        ((Connect4Controller) Connect4Application.currController).showWaitingMessage();
-                    }
-                    else ((LobbyMenuController) Connect4Application.currController).displayFailureLabel();
-                }
-                case OPPONENT_FOUND -> {
-                    if (buffer.get() == PUBLIC) Connect4Application.loadScene("connect4.fxml");
-                    else {
-                        client.lobby = new Lobby(buffer, client.name);
-                        Connect4Application.loadScene("lobby.fxml");
-                        ((LobbyController) Connect4Application.currController)
-                    }
-                }
-                case LOBBY_CREATED -> {
-                    client.lobby = new Lobby(buffer.getShort());
-                    ((LobbyController) Connect4Application.currController).codeLabel.setText("Code: " + client.lobby.code);
-                }
+            if (lobbyType == PUBLIC) {
+                Connect4Application.loadScene("connect4.fxml");
+                ((Connect4Controller) Connect4Application.currController).showWaitingMessage();
             }
+            else ((LobbyMenuController) Connect4Application.currController).displayFailureLabel();
+        });
+    }
+
+    private void handleOpponentFound(ByteBuffer buffer) {
+        final int SETTINGS_BYTES = 71;
+        byte lobbyType = buffer.get();
+        byte[] settings = new byte[SETTINGS_BYTES];
+        buffer.get(settings);
+        Platform.runLater(() -> {
+            if (lobbyType == PUBLIC) Connect4Application.loadScene("connect4.fxml");
+            else {
+                client.lobby = new Lobby(ByteBuffer.allocate(SETTINGS_BYTES).put(settings).flip(), client.name, false);
+                Connect4Application.loadScene("lobby.fxml");
+                ((LobbyController) Connect4Application.currController).displayLobbySettings(client.lobby);
+                new PlayerSelection().sendNameToServer(client.name);
+            }
+        });
+    }
+
+    private void handleLobbyCreated(short code) {
+        client.lobby = new Lobby(code);
+        Platform.runLater(() -> {
+            Connect4Application.loadScene("lobby.fxml");
+            ((LobbyController) Connect4Application.currController).codeLabel.setText("Code: " + client.lobby.code);
         });
     }
 }

@@ -8,10 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.controllers.LobbyController">
+<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.controllers.LobbyController">
    <children>
       <VBox alignment="CENTER" prefHeight="600.0" prefWidth="750.0" spacing="30.0">
          <children>
@@ -20,11 +21,30 @@
                   <Font size="30.0" />
                </font>
             </Label>
-            <Label alignment="CENTER" prefHeight="100.0" prefWidth="600.0" text="Host vs. Guest">
-               <font>
-                  <Font size="50.0" />
-               </font>
-            </Label>
+            <VBox alignment="CENTER" prefHeight="110.0" prefWidth="100.0" spacing="10.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Circle fill="RED" radius="25.0" stroke="BLACK" strokeType="INSIDE" />
+                        <TextField fx:id="hostName" style="-fx-border-color: black; -fx-border-width: 3;">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Circle fill="YELLOW" radius="25.0" stroke="BLACK" strokeType="INSIDE" />
+                        <TextField fx:id="guestName" style="-fx-border-color: black; -fx-border-width: 3;">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0">
                <children>
                   <VBox prefHeight="200.0" prefWidth="300.0" spacing="16.0">
@@ -41,7 +61,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <TextField prefHeight="20.0" prefWidth="200.0" promptText="3:00" text="3:00">
+                              <TextField fx:id="startTime" prefHeight="20.0" prefWidth="200.0" promptText="3:00" text="3:00">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -55,10 +75,13 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <TextField prefHeight="20.0" prefWidth="200.0" text="0" />
+                              <TextField fx:id="increment" prefHeight="20.0" prefWidth="200.0" text="0">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font></TextField>
                            </children>
                         </HBox>
-                        <RadioButton mnemonicParsing="false" prefHeight="38.0" prefWidth="200.0" text="Unlimited">
+                        <RadioButton fx:id="unlimited" graphicTextGap="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="200.0" text="Unlimited">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -80,7 +103,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <ChoiceBox prefWidth="150.0" />
+                              <ChoiceBox fx:id="turnOrder" prefWidth="150.0" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" prefHeight="38.0" prefWidth="300.0" spacing="10.0">
@@ -90,7 +113,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <ChoiceBox prefWidth="150.0" />
+                              <ChoiceBox fx:id="nextOrder" prefWidth="150.0" />
                            </children>
                         </HBox>
                      </children>

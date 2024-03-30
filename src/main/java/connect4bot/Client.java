@@ -39,7 +39,8 @@ public class Client implements Closeable {
                 try {
                     if (bytes == -1) clientSock.close();
                     System.out.println("RECEIVED");
-                    buffer.flip();
+                    System.out.println(buffer.flip().remaining());
+//                    buffer.flip();
                     while (buffer.hasRemaining()) {
                         Message.of(buffer.get()).process(buffer);
                     }
@@ -51,9 +52,7 @@ public class Client implements Closeable {
             }
 
             @Override
-            public void failed(Throwable throwable, Void unused) {
-                // received.completeExceptionally(throwable);
-            }
+            public void failed(Throwable throwable, Void unused) {}
         });
     }
 

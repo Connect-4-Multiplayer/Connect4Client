@@ -1,6 +1,7 @@
 package connect4bot.controllers;
 
 import connect4bot.Connect4Application;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -44,11 +45,11 @@ public class TitleController extends Controller implements Initializable {
 
     public void findOpponent() {
         new LobbyJoin().sendJoinPublicRequest();
-        Connect4Application.loadScene("connect4.fxml");
+        Platform.runLater(() -> Connect4Application.loadScene("connect4.fxml"));
     }
 
     public void openLobbyMenu() {
-        Connect4Application.loadScene("lobbyMenu.fxml");
+        Platform.runLater(() -> Connect4Application.loadScene("lobbyMenu.fxml"));
     }
 
     public static void main(String[] args) {

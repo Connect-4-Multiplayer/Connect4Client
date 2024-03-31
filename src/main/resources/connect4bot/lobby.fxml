@@ -31,6 +31,11 @@
                               <Font size="30.0" />
                            </font>
                         </TextField>
+                        <Label fx:id="hostReady" style="-fx-text-fill: Green;" text="Ready!" visible="false">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </Label>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
@@ -41,6 +46,11 @@
                               <Font size="30.0" />
                            </font>
                         </TextField>
+                        <Label fx:id="guestReady" style="-fx-text-fill: Green;" text="Ready!" visible="false">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </Label>
                      </children>
                   </HBox>
                </children>
@@ -120,7 +130,7 @@
                   </VBox>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Ready">
+            <Button fx:id="readyButton" mnemonicParsing="false" onMouseClicked="#toggleReady" prefHeight="50.0" prefWidth="200.0" text="Ready">
                <font>
                   <Font size="20.0" />
                </font>

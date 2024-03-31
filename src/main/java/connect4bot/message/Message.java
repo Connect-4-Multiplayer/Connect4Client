@@ -15,6 +15,7 @@ public abstract class Message {
         return switch (type) {
             case LOBBY_JOIN -> new LobbyJoin();
             case MOVE -> new Move();
+            case PLAYER_SELECTION -> new PlayerSelection();
             default -> null;
         };
     }

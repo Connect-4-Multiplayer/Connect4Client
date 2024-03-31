@@ -26,9 +26,12 @@ public class Lobby {
     public short code;
     public String hostName;
     public String guestName;
+    public boolean hostReady;
+    public boolean guestReady;
 
     public Lobby(short code) {
         this.code = code;
+        clientRole = HOST;
     }
 
     public Lobby(ByteBuffer buffer, String guestName, boolean clientIsHost) {
@@ -39,7 +42,6 @@ public class Lobby {
         increment = buffer.get();
         if (buffer.get() == 1) isUnlimited = true;
         hostName = getNameFromBuffer(buffer);
-        System.out.println(hostName + " is host");
         this.guestName = guestName;
         if (clientIsHost) clientRole = HOST;
     }
@@ -59,7 +61,20 @@ public class Lobby {
             hostName = opponentName;
             Platform.runLater(() -> ((LobbyController) Connect4Application.currController).updateHostName(opponentName));
         }
+    }
 
+    public void toggleReady(byte player) {
+        LobbyController controller = ((LobbyController) Connect4Application.currController);
+        if (player == HOST) {
+            hostReady = !hostReady;
+            System.out.println("Host Ready: " + hostReady);
+            controller.hostReady.setVisible(hostReady);
+        }
+        else {
+            guestReady = !guestReady;
+            System.out.println("Guest Ready: " + guestReady);
+            controller.guestReady.setVisible(guestReady);
+        }
     }
 
     private String getNameFromBuffer(ByteBuffer buffer) {

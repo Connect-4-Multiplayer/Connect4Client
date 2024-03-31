@@ -35,9 +35,7 @@ public class LobbyJoin extends Message {
 
     @Override
     public void process(ByteBuffer buffer) {
-        byte messageCode = buffer.get();
-        System.out.println("Message Code: " + messageCode);
-        switch (messageCode) {
+        switch (buffer.get()) {
             case OPPONENT_NOT_FOUND -> handleOpponentNotFound(buffer.get());
             case OPPONENT_FOUND -> handleOpponentFound(buffer);
             case LOBBY_CREATED -> handleLobbyCreated(buffer.getShort());
@@ -64,8 +62,8 @@ public class LobbyJoin extends Message {
             else {
                 client.lobby = new Lobby(ByteBuffer.allocate(SETTINGS_BYTES).put(settings).flip(), client.name, false);
                 Connect4Application.loadScene("lobby.fxml");
-                ((LobbyController) Connect4Application.currController).displayLobbySettings(client.lobby);
-                new PlayerSelection().sendNameToServer(client.name);
+                ((LobbyController) Connect4Application.currController).setUpLobbyForGuest(client.lobby);
+                new PlayerSelection().sendName(client.name);
             }
         });
     }
@@ -74,7 +72,7 @@ public class LobbyJoin extends Message {
         client.lobby = new Lobby(code);
         Platform.runLater(() -> {
             Connect4Application.loadScene("lobby.fxml");
-            ((LobbyController) Connect4Application.currController).codeLabel.setText("Code: " + client.lobby.code);
+            ((LobbyController) Connect4Application.currController).setUpLobbyForHost();
         });
     }
 }

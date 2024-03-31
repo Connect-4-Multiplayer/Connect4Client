@@ -5,33 +5,41 @@ import connect4bot.Lobby;
 import connect4bot.message.PlayerSelection;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static connect4bot.Connect4Application.client;
+
 public class LobbyController extends Controller {
     @FXML
-    public Label codeLabel;
+    private Label codeLabel;
     @FXML
-    public TextField hostName;
+    private TextField hostName;
     @FXML
-    public TextField guestName;
+    public Label hostReady;
     @FXML
-    public TextField startTime;
+    private TextField guestName;
     @FXML
-    public TextField increment;
+    public Label guestReady;
     @FXML
-    public RadioButton unlimited;
+    private TextField startTime;
     @FXML
-    public ChoiceBox<String> turnOrder;
+    private TextField increment;
     @FXML
-    public ChoiceBox<String> nextOrder;
+    private RadioButton unlimited;
+
+    @FXML
+    private ChoiceBox<String> turnOrder;
+    @FXML
+    private ChoiceBox<String> nextOrder;
     private static final String[] turnOrders = {"You", "Opponent", "Random"};
     private static final String[] nextOrders = {"Alternate", "Keep", "Random"};
+
+    @FXML
+    private Button readyButton;
+    private static final String[] readyOptions = {"Ready", "Unready"};
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -42,14 +50,23 @@ public class LobbyController extends Controller {
         nextOrder.setValue("Alternate");
     }
 
-    public void displayLobbySettings(Lobby lobby) {
-        codeLabel.setText("Join Code: " + lobby.code);
+    public void setUpLobbyForHost() {
+        codeLabel.setText("Code: " + client.lobby.code);
+        hostName.textProperty().addListener((__, ___, name) -> {
+            new PlayerSelection().sendName(name);
+        });
+        guestName.setEditable(false);
+    }
+
+    public void setUpLobbyForGuest(Lobby lobby) {
+        codeLabel.setVisible(false);
 
         hostName.setText(lobby.hostName);
-        hostName.setDisable(true);
-        hostName.textProperty().addListener((__, ___, name) -> new PlayerSelection().sendNameToServer(name));
-
+        hostName.setEditable(false);
         guestName.setText(lobby.guestName);
+        guestName.textProperty().addListener((__, ___, name) -> {
+            new PlayerSelection().sendName(name);
+        });
 
         startTime.setText(lobby.startTimeString());
         increment.setText(lobby.increment + "");
@@ -64,5 +81,9 @@ public class LobbyController extends Controller {
 
     public void updateGuestName(String name) {
         guestName.setText(name);
+    }
+
+    public void toggleReady() {
+        new PlayerSelection().toggleReady();
     }
 }

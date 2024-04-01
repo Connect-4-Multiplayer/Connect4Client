@@ -1,5 +1,7 @@
 package connect4bot.message;
 
+import connect4bot.Client;
+
 import java.nio.ByteBuffer;
 
 import static connect4bot.Connect4Application.client;
@@ -7,7 +9,9 @@ import static connect4bot.Connect4Application.client;
 public abstract class Message {
     static final byte LOBBY_JOIN = 0;
     static final byte MOVE = 1;
-    static final byte PLAYER_SELECTION = 2;
+    static final byte PLAYER_INPUT = 2;
+    static final byte SET_SETTING = 3;
+
     byte type;
 
     public static Message of(byte type) {
@@ -15,7 +19,8 @@ public abstract class Message {
         return switch (type) {
             case LOBBY_JOIN -> new LobbyJoin();
             case MOVE -> new Move();
-            case PLAYER_SELECTION -> new PlayerSelection();
+            case PLAYER_INPUT -> new PlayerInput();
+            case SET_SETTING -> new SetSetting();
             default -> null;
         };
     }
@@ -43,5 +48,5 @@ public abstract class Message {
         return bytes;
     }
 
-    public abstract void process(ByteBuffer buffer);
+    public abstract void process(Client client, ByteBuffer buffer);
 }

@@ -1,16 +1,18 @@
 package connect4bot.message;
 
+import connect4bot.Client;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 import static connect4bot.Connect4Application.client;
 
-public class PlayerSelection extends Message {
-    static final byte NAME = 0, TOGGLE_READY = 1;
+public class PlayerInput extends Message {
+    static final byte NAME = 0, TOGGLE_READY = 1, TOGGLE_UNLIMITED = 2;
     static final int MAX_NAME_LENGTH = 64;
 
-    public PlayerSelection() {
-        this.type = PLAYER_SELECTION;
+    public PlayerInput() {
+        this.type = PLAYER_INPUT;
     }
 
     public void sendName(String name) {
@@ -19,11 +21,15 @@ public class PlayerSelection extends Message {
     }
 
     public void toggleReady() {
-        client.write(constructMessage(3, TOGGLE_READY).flip());
+        client.write(constructMessage(2, TOGGLE_READY).flip());
+    }
+
+    public void toggleUnlimited() {
+        client.write(constructMessage(2, TOGGLE_UNLIMITED).flip());
     }
 
     @Override
-    public void process(ByteBuffer buffer) {
+    public void process(Client client, ByteBuffer buffer) {
         System.out.println("got player selection");
         byte selection = buffer.get();
         switch (selection) {

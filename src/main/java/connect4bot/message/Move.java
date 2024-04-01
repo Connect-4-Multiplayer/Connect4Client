@@ -1,5 +1,6 @@
 package connect4bot.message;
 
+import connect4bot.Client;
 import connect4bot.Connect4Application;
 import connect4bot.controllers.Connect4Controller;
 
@@ -11,7 +12,7 @@ public class Move extends Message {
     }
 
     @Override
-    public void process(ByteBuffer buffer) {
+    public void process(Client client, ByteBuffer buffer) {
         ((Connect4Controller) Connect4Application.currController).playMove(getBytes(buffer, 6));
     }
 }

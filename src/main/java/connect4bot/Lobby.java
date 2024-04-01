@@ -8,13 +8,12 @@ import java.nio.ByteBuffer;
 public class Lobby {
     // Turn orders
     public static final byte HOST = 0;
-    static final byte GUEST = 1;
+    public static final byte GUEST = 1;
     static final byte INIT_RANDOM = 2;
 
     // Next orders
-    private static final byte STAY = 0;
-    private static final byte ALTERNATING = 1;
-    private static final byte RANDOM = 2;
+    private static final byte ALTERNATING = 0;
+    private static final byte RANDOM = 1;
 
     public byte isPublic;
     public int clientRole = GUEST;
@@ -28,25 +27,26 @@ public class Lobby {
     public String guestName;
     public boolean hostReady;
     public boolean guestReady;
+    public LobbyController controller;
 
     public Lobby(short code) {
         this.code = code;
         clientRole = HOST;
     }
 
-    public Lobby(ByteBuffer buffer, String guestName, boolean clientIsHost) {
+    public Lobby(ByteBuffer buffer, String guestName) {
         isPublic = buffer.get();
         turnOrder = buffer.get();
         nextOrder = buffer.get();
-        startTime = (short) ((buffer.get() << 8) + buffer.get());
         increment = buffer.get();
         if (buffer.get() == 1) isUnlimited = true;
+        startTime = (short) (((buffer.get() & 255) << 8) + (buffer.get() & 255));
         hostName = getNameFromBuffer(buffer);
         this.guestName = guestName;
-        if (clientIsHost) clientRole = HOST;
     }
 
     public String startTimeString() {
+        System.out.println("Start Time: " + startTime);
         int seconds = startTime % 60;
         return (startTime / 60) + (seconds < 10 ? ":0" : ":") + seconds;
     }
@@ -55,25 +55,22 @@ public class Lobby {
         String opponentName = getNameFromBuffer(name);
         if (clientRole == HOST) {
             guestName = opponentName;
-            Platform.runLater(() -> ((LobbyController) Connect4Application.currController).updateGuestName(opponentName));
+            Platform.runLater(() -> controller.guestName.setText(opponentName));
         }
         else {
             hostName = opponentName;
-            Platform.runLater(() -> ((LobbyController) Connect4Application.currController).updateHostName(opponentName));
+            Platform.runLater(() -> controller.hostName.setText(opponentName));
         }
     }
 
     public void toggleReady(byte player) {
-        LobbyController controller = ((LobbyController) Connect4Application.currController);
         if (player == HOST) {
             hostReady = !hostReady;
-            System.out.println("Host Ready: " + hostReady);
-            controller.hostReady.setVisible(hostReady);
+            Platform.runLater(() -> controller.setHostReady(hostReady));
         }
         else {
             guestReady = !guestReady;
-            System.out.println("Guest Ready: " + guestReady);
-            controller.guestReady.setVisible(guestReady);
+            Platform.runLater(() -> controller.setGuestReady(guestReady));
         }
     }
 
@@ -83,5 +80,32 @@ public class Lobby {
             name.append((char) ((buffer.get() << 8) + buffer.get()));
         }
         return name.toString();
+    }
+
+    public void setTurnOrder(byte turnOrder) {
+        this.turnOrder = turnOrder;
+        Platform.runLater(() -> controller.turnOrder.getSelectionModel().select(turnOrder));
+
+    }
+
+    public void setNextOrder(byte nextOrder) {
+        this.nextOrder = nextOrder;
+        Platform.runLater(() -> controller.nextOrder.getSelectionModel().select(nextOrder));
+    }
+
+    public void setStartTime(short startTime) {
+        this.startTime = startTime;
+        Platform.runLater(() -> controller.startTime.setText(startTimeString()));
+    }
+
+    public void setIncrement(byte increment) {
+        this.increment = increment;
+        System.out.println("Increment set");
+        Platform.runLater(() -> controller.increment.setText(increment + ""));
+    }
+
+    public void setUnlimited(byte isUnlimited) {
+        this.isUnlimited = isUnlimited != 0;
+        Platform.runLater(() -> controller.unlimited.setSelected(this.isUnlimited));
     }
 }

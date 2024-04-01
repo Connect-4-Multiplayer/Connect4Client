@@ -91,11 +91,20 @@
                                  </font></TextField>
                            </children>
                         </HBox>
-                        <RadioButton fx:id="unlimited" graphicTextGap="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="200.0" text="Unlimited">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </RadioButton>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="200.0" text="Unlimited">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <RadioButton fx:id="unlimited" contentDisplay="GRAPHIC_ONLY" graphicTextGap="10.0" mnemonicParsing="false" onMouseClicked="#toggleUnlimited" prefHeight="38.0" prefWidth="200.0">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" height="200.0" stroke="BLACK" strokeType="INSIDE" width="3.0" />

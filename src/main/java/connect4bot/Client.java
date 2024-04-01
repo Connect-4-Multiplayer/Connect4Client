@@ -23,15 +23,24 @@ public class Client implements Closeable {
 
     private final AsynchronousSocketChannel clientSock;
     public Lobby lobby;
-    public String name = "DK";
+    public String name = "";
 
     public Client() throws IOException, ExecutionException, InterruptedException {
         clientSock = AsynchronousSocketChannel.open();
         clientSock.connect(new InetSocketAddress(HOST, PORT)).get();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                clientSock.close();
+                System.out.println("Closed");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
         receive();
     }
 
     public void receive() throws IOException, InterruptedException, ExecutionException {
+        Client client = this;
         ByteBuffer buffer = ByteBuffer.allocate(INPUT_BYTES);
         clientSock.read(buffer, null, new CompletionHandler<Integer, Void>() {
             @Override
@@ -42,7 +51,7 @@ public class Client implements Closeable {
                     System.out.println(buffer.flip().remaining());
 //                    buffer.flip();
                     while (buffer.hasRemaining()) {
-                        Message.of(buffer.get()).process(buffer);
+                        Message.of(buffer.get()).process(client, buffer);
                     }
                     receive();
                 }

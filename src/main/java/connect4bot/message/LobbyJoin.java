@@ -1,5 +1,6 @@
 package connect4bot.message;
 
+import connect4bot.Client;
 import connect4bot.Connect4Application;
 import connect4bot.Lobby;
 import connect4bot.controllers.Connect4Controller;
@@ -34,7 +35,7 @@ public class LobbyJoin extends Message {
     }
 
     @Override
-    public void process(ByteBuffer buffer) {
+    public void process(Client client, ByteBuffer buffer) {
         switch (buffer.get()) {
             case OPPONENT_NOT_FOUND -> handleOpponentNotFound(buffer.get());
             case OPPONENT_FOUND -> handleOpponentFound(buffer);
@@ -60,10 +61,10 @@ public class LobbyJoin extends Message {
         Platform.runLater(() -> {
             if (lobbyType == PUBLIC) Connect4Application.loadScene("connect4.fxml");
             else {
-                client.lobby = new Lobby(ByteBuffer.allocate(SETTINGS_BYTES).put(settings).flip(), client.name, false);
-                Connect4Application.loadScene("lobby.fxml");
-                ((LobbyController) Connect4Application.currController).setUpLobbyForGuest(client.lobby);
-                new PlayerSelection().sendName(client.name);
+                client.lobby = new Lobby(ByteBuffer.allocate(SETTINGS_BYTES).put(settings).flip(), client.name);                Connect4Application.loadScene("lobby.fxml");
+                LobbyController controller = client.lobby.controller = ((LobbyController) Connect4Application.currController);
+                controller.setUpLobbyForGuest(client.lobby);
+                new PlayerInput().sendName(client.name);
             }
         });
     }
@@ -72,7 +73,8 @@ public class LobbyJoin extends Message {
         client.lobby = new Lobby(code);
         Platform.runLater(() -> {
             Connect4Application.loadScene("lobby.fxml");
-            ((LobbyController) Connect4Application.currController).setUpLobbyForHost();
+            LobbyController controller = client.lobby.controller = (LobbyController) Connect4Application.currController;
+            controller.setUpLobbyForHost();
         });
     }
 }

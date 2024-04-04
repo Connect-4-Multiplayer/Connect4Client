@@ -48,8 +48,8 @@ public class Client implements Closeable {
                 try {
                     if (bytes == -1) clientSock.close();
                     System.out.println("RECEIVED");
-                    System.out.println(buffer.flip().remaining());
-//                    buffer.flip();
+                    buffer.flip();
+                    System.out.println(buffer.remaining());
                     while (buffer.hasRemaining()) {
                         Message.of(buffer.get()).process(client, buffer);
                     }

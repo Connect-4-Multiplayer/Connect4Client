@@ -1,11 +1,15 @@
 package connect4bot.controllers;
 
 import connect4bot.Connect4Application;
+import connect4bot.message.PlayerInput;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -71,6 +75,11 @@ public class Connect4Controller extends Controller implements Initializable {
     @FXML
     private GridPane grid;
     /**
+     * Container for the labels marking pre-moves
+     */
+    @FXML
+    private GridPane preMoves;
+    /**
      * Options that allow the user to quit or restart
      */
     @FXML
@@ -80,8 +89,6 @@ public class Connect4Controller extends Controller implements Initializable {
      */
     @FXML
     private Label message;
-    @FXML
-    private HBox engineNavigator;
 
     /**
      * Initializes the gui elements for starting the game
@@ -116,13 +123,22 @@ public class Connect4Controller extends Controller implements Initializable {
      * @param col     The index of the column
      */
     private void configureMouseEvents(Pane colPane, int col) throws IOException, ExecutionException, InterruptedException {
-        colPane.setOnMouseEntered(e0 -> {
+        colPane.setOnMouseEntered(e -> {
             moveMarker.setCenterX(BOARD_X + CELL_WIDTH * (0.5 + col));
             moveMarker.setCenterY(BOARD_Y + BOARD_HEIGHT - CELL_HEIGHT * (0.5 + 0));
             moveMarker.setVisible(true);
         });
         colPane.setOnMouseExited(e -> moveMarker.setVisible(false));
-        colPane.setOnMouseClicked(e0 -> new Move().sendRequest((byte) col));
+        colPane.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                new Move().sendMove((byte) col);
+                System.out.println("Primary");
+            }
+            else {
+                new Move().sendDeletePreMove();
+                System.out.println("Secondary");
+            }
+        });
     }
 
     /**
@@ -131,31 +147,42 @@ public class Connect4Controller extends Controller implements Initializable {
     public void playMove(byte[] args) {
         final byte col = args[0], colHeight = args[1], color = args[2],
                 gameState = args[3], winningSpot = args[4], winInc = args[5];
-        Platform.runLater(() -> {
-            Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
-            board[col * 6 + colHeight] = piece;
-            backGround.getChildren().add(piece);
-            piece.toBack();
+        Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
+        board[col * 6 + colHeight] = piece;
+        backGround.getChildren().add(piece);
+        piece.toBack();
 
-            TranslateTransition drop = new TranslateTransition(Duration.seconds(0.2), piece);
-            drop.setByY(BOARD_HEIGHT - CELL_HEIGHT * colHeight);
-            drop.setOnFinished(e -> {
-                if (gameState != NOT_OVER) {
-                    message.setVisible(true);
-                    displayEndOptions();
+        TranslateTransition drop = new TranslateTransition(Duration.seconds(0.2), piece);
+        drop.setByY(BOARD_HEIGHT - CELL_HEIGHT * colHeight);
+        drop.setOnFinished(e -> {
+            if (gameState != NOT_OVER) {
+                message.setVisible(true);
+                endOptions.setVisible(true);
+            }
+            if (gameState == DRAW) {
+                message.setText("Draw!");
+            }
+            else if (gameState != NOT_OVER) {
+                highlightWin(winningSpot, winInc);
+                if (gameState == WIN) {
+                    message.setText("You Win!");
                 }
-                if (gameState == DRAW) {
-                    message.setText("DRAW!");
-                } else if (gameState != NOT_OVER) {
-                    highlightWin(winningSpot, winInc);
-                    if (gameState == WIN) {
-                        message.setText("You Win!");
-                    }
-                    else message.setText("You Lose!");
-                }
-            });
-            drop.play();
+                else message.setText("You Lose!");
+            }
         });
+        drop.play();
+    }
+
+    public void displayPreMoves(byte[] counts) {
+        int col = 0;
+        for (Node preMoveLabel : preMoves.getChildren()) {
+            byte count = counts[col++];
+            if (count > 0) {
+                ((Label) preMoveLabel).setText(count + "");
+                preMoveLabel.setVisible(true);
+            }
+            else preMoveLabel.setVisible(false);
+        }
     }
 
     public void highlightWin(byte winningSpot, byte winInc) {
@@ -184,22 +211,6 @@ public class Connect4Controller extends Controller implements Initializable {
         return piece;
     }
 
-    public void startAnalysis() {
-        endOptions.setVisible(false);
-        engineNavigator.setVisible(true);
-        backGround.getChildren().removeAll(Arrays.stream(board).filter(Objects::nonNull).toList());
-    }
-
-    public void showNextMove(byte[] args, String minimax) {
-        message.setText(minimax);
-        playMove(args);
-    }
-
-    public void showPrevMove(byte col, byte height, String minimax) {
-        message.setText(minimax);
-        backGround.getChildren().remove(board[col * 6 + height]);
-    }
-
     public void showWaitingMessage() {
         Platform.runLater(() -> {
             message.setText("Waiting...");
@@ -208,23 +219,16 @@ public class Connect4Controller extends Controller implements Initializable {
     }
 
     /**
-     * Displays the options for ending the game
-     */
-    private void displayEndOptions() {
-        endOptions.setVisible(true);
-    }
-
-    /**
      * Restarts the game
      */
-    public void playAgain() throws IOException {
-        Connect4Application.loadScene("connect4.fxml");
+    public void playAgain() {
+        new PlayerInput().toggleReady();
     }
 
     /**
      * Returns to the title screen
      */
-    public void quit() throws IOException {
+    public void quit() {
         Connect4Application.loadScene("title.fxml");
     }
 }

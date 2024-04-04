@@ -8,9 +8,10 @@ import static connect4bot.Connect4Application.client;
 
 public abstract class Message {
     static final byte LOBBY_JOIN = 0;
-    static final byte MOVE = 1;
+    static final byte MOVE_MESSAGE = 1;
     static final byte PLAYER_INPUT = 2;
     static final byte SET_SETTING = 3;
+    static final byte GAME_MESSAGE = 4;
 
     byte type;
 
@@ -18,9 +19,10 @@ public abstract class Message {
         System.out.println("Type: " + type);
         return switch (type) {
             case LOBBY_JOIN -> new LobbyJoin();
-            case MOVE -> new Move();
+            case MOVE_MESSAGE -> new Move();
             case PLAYER_INPUT -> new PlayerInput();
             case SET_SETTING -> new SetSetting();
+            case GAME_MESSAGE -> new GameMessage();
             default -> null;
         };
     }

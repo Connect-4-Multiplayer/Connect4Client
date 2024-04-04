@@ -11,6 +11,57 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="backGround" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="connect4bot.controllers.Connect4Controller">
+   <GridPane fx:id="preMoves" layoutX="144.0" layoutY="406.0" prefHeight="40.0" prefWidth="462.0">
+     <columnConstraints>
+       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+     </columnConstraints>
+     <rowConstraints>
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+     </rowConstraints>
+      <children>
+         <Label alignment="CENTER" text="0" visible="false">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+         <Label text="0" visible="false" GridPane.columnIndex="1">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+         <Label text="0" visible="false" GridPane.columnIndex="2">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+         <Label text="0" visible="false" GridPane.columnIndex="3">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+         <Label text="0" visible="false" GridPane.columnIndex="4">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+         <Label text="0" visible="false" GridPane.columnIndex="5">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+         <Label text="0" visible="false" GridPane.columnIndex="6">
+            <font>
+               <Font size="20.0" />
+            </font>
+         </Label>
+      </children>
+   </GridPane>
     <Circle fx:id="moveMarker" fill="DODGERBLUE" mouseTransparent="true" opacity="0.375" radius="25.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" visible="false" />
     <GridPane fx:id="grid" layoutX="144.0" layoutY="70.0" prefHeight="336.0" prefWidth="462.0">
         <columnConstraints>
@@ -23,9 +74,14 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="336.0" vgrow="SOMETIMES" />
         </rowConstraints>
     </GridPane>
+    <Label fx:id="message" alignment="CENTER" layoutX="175.0" layoutY="450.0" prefHeight="50.0" prefWidth="400.0" text="Select Option:" visible="false">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
     <HBox fx:id="endOptions" alignment="TOP_CENTER" layoutY="500.0" prefHeight="100.0" prefWidth="750.0" spacing="25.0" visible="false">
       <children>
            <Button mnemonicParsing="false" onMouseClicked="#playAgain" prefHeight="50.0" prefWidth="200.0" text="Play Again">
@@ -33,26 +89,11 @@
                    <Font size="15.0" />
                </font>
            </Button>
-         <Button mnemonicParsing="false" onAction="#startAnalysis" prefHeight="50.0" prefWidth="200.0" text="Analyze Game" />
+         <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Analyze Game" />
            <Button mnemonicParsing="false" onAction="#quit" onMouseClicked="#quit" prefHeight="50.0" prefWidth="200.0" text="Quit">
                <font>
                    <Font size="15.0" />
                </font>
            </Button>
       </children></HBox>
-    <Label fx:id="message" alignment="CENTER" layoutX="175.0" layoutY="400.0" prefHeight="100.0" prefWidth="400.0" text="Select Option:" visible="false">
-        <font>
-            <Font size="40.0" />
-        </font>
-    </Label>
-   <HBox fx:id="engineNavigator" alignment="TOP_CENTER" layoutX="10.0" layoutY="510.0" prefHeight="100.0" prefWidth="750.0" spacing="25.0" visible="false">
-      <children>
-         <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Back">
-            <font>
-               <Font size="15.0" />
-            </font>
-         </Button>
-         <Button mnemonicParsing="false" onAction="#startAnalysis" prefHeight="50.0" prefWidth="200.0" text="Next" />
-      </children>
-   </HBox>
 </AnchorPane>

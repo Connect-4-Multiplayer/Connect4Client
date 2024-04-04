@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import static connect4bot.Connect4Application.client;
 
 public class PlayerInput extends Message {
-    static final byte NAME = 0, TOGGLE_READY = 1, TOGGLE_UNLIMITED = 2;
+    static final byte NAME = 0, TOGGLE_READY = 1;
     static final int MAX_NAME_LENGTH = 64;
 
     public PlayerInput() {
@@ -22,10 +22,6 @@ public class PlayerInput extends Message {
 
     public void toggleReady() {
         client.write(constructMessage(2, TOGGLE_READY).flip());
-    }
-
-    public void toggleUnlimited() {
-        client.write(constructMessage(2, TOGGLE_UNLIMITED).flip());
     }
 
     @Override

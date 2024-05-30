@@ -229,6 +229,7 @@ public class Connect4Controller extends Controller implements Initializable {
      * Returns to the title screen
      */
     public void quit() {
+        new PlayerInput().quit();
         Connect4Application.loadScene("title.fxml");
     }
 }

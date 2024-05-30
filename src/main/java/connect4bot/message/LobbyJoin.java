@@ -54,7 +54,7 @@ public class LobbyJoin extends Message {
     }
 
     private void handleOpponentFound(ByteBuffer buffer) {
-        final int maxSettingsBytes = 71;
+        final int maxSettingsBytes = 73;
         byte lobbyType = buffer.get();
         byte[] settings = new byte[maxSettingsBytes];
         int i = 0;
@@ -64,7 +64,8 @@ public class LobbyJoin extends Message {
         Platform.runLater(() -> {
             if (lobbyType == PUBLIC) Connect4Application.loadScene("connect4.fxml");
             else {
-                client.lobby = new Lobby(ByteBuffer.allocate(maxSettingsBytes).put(settings).flip(), client.name);                Connect4Application.loadScene("lobby.fxml");
+                client.lobby = new Lobby(ByteBuffer.allocate(maxSettingsBytes).put(settings).flip(), client.name);
+                Connect4Application.loadScene("lobby.fxml");
                 LobbyController controller = client.lobby.controller = ((LobbyController) Connect4Application.currController);
                 controller.setUpLobbyForGuest(client.lobby);
                 new PlayerInput().sendName(client.name);
@@ -77,7 +78,7 @@ public class LobbyJoin extends Message {
         Platform.runLater(() -> {
             Connect4Application.loadScene("lobby.fxml");
             LobbyController controller = client.lobby.controller = (LobbyController) Connect4Application.currController;
-            controller.setUpLobbyForHost();
+            controller.setUpLobbyForHost(client.lobby);
         });
     }
 }

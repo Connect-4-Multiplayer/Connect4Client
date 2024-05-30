@@ -28,6 +28,7 @@ public class SetSetting extends Message {
 
     @Override
     public void process(Client client, ByteBuffer buffer) {
+        System.out.println("got setting");
         byte settingId = buffer.get();
         byte settingVal0 = buffer.get();
         byte settingVal1 = buffer.get();

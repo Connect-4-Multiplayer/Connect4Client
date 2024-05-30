@@ -17,7 +17,7 @@ import static connect4bot.Lobby.HOST;
 
 public class LobbyController extends Controller {
     @FXML
-    private Label codeLabel;
+    public Label codeLabel;
     @FXML
     public TextField hostName;
     @FXML
@@ -36,7 +36,6 @@ public class LobbyController extends Controller {
 
     @FXML
     public ChoiceBox<String> turnOrder;
-    public static final String[] turnOrders = {"You", "Opponent", "Random"};
 
     @FXML
     public ChoiceBox<String> nextOrder;
@@ -52,49 +51,50 @@ public class LobbyController extends Controller {
         unlimited.setContentDisplay(ContentDisplay.RIGHT);
     }
 
-    public void setUpLobbyForHost() {
+    public void setUpLobbyForHost(Lobby lobby) {
         codeLabel.setText("Code: " + client.lobby.code);
-        hostName.textProperty().addListener((unused0, unused1, name) -> {
-            new PlayerInput().sendName(name);
-        });
+        codeLabel.setVisible(true);
+        hostName.textProperty().addListener((unused0, unused1, name) -> new PlayerInput().sendName(name));
         guestName.setEditable(false);
 
         startTime.textProperty().addListener((unused0, unused1, unused2) -> this.changeStartTime());
         increment.textProperty().addListener((unused0, unused1, unused2) -> this.changeIncrement());
 
         turnOrder.setItems(FXCollections.observableArrayList("You", "Opponent", "Random"));
-        turnOrder.setValue("Random");
         turnOrder.getSelectionModel().selectedIndexProperty().addListener(
                 (unused0, unused1, order) -> new SetSetting().sendSetting(SetSetting.TURN_ORDER, order.byteValue())
         );
         nextOrder.getSelectionModel().selectedIndexProperty().addListener(
                 (unused0, unused1, order) -> new SetSetting().sendSetting(SetSetting.NEXT_ORDER, order.byteValue())
         );
+        setSettings(lobby);
     }
 
     public void setUpLobbyForGuest(Lobby lobby) {
         codeLabel.setVisible(false);
-
-        hostName.setText(lobby.hostName);
         hostName.setEditable(false);
-        guestName.setText(lobby.guestName);
-        guestName.textProperty().addListener((unused0, unused1, name) -> {
-            new PlayerInput().sendName(name);
-        });
+        guestName.textProperty().addListener((unused0, unused1, name) -> new PlayerInput().sendName(name));
 
-        startTime.setText(lobby.startTimeString());
         startTime.setEditable(false);
-        increment.setText(lobby.increment + "");
         increment.setEditable(false);
-        unlimited.setSelected(lobby.isUnlimited);
         unlimited.setDisable(true);
 
-        turnOrder.getSelectionModel().select(lobby.turnOrder);
-        turnOrder.setDisable(true);
         turnOrder.setItems(FXCollections.observableArrayList("Opponent", "You", "Random"));
-        turnOrder.setValue("Random");
-        nextOrder.getSelectionModel().select(lobby.nextOrder);
+        turnOrder.setDisable(true);
         nextOrder.setDisable(true);
+        setSettings(lobby);
+    }
+
+    private void setSettings(Lobby lobby) {
+        hostName.setText(lobby.hostName);
+        guestName.setText(lobby.guestName);
+
+        startTime.setText(lobby.startTimeString());
+        increment.setText(lobby.increment + "");
+        unlimited.setSelected(lobby.isUnlimited);
+
+        turnOrder.getSelectionModel().select(lobby.turnOrder);
+        nextOrder.getSelectionModel().select(lobby.nextOrder);
     }
 
     public void changeStartTime() {

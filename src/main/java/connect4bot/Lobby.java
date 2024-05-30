@@ -35,6 +35,7 @@ public class Lobby {
     }
 
     public Lobby(ByteBuffer buffer, String guestName) {
+        code = buffer.getShort();
         isPublic = buffer.get();
         turnOrder = buffer.get();
         nextOrder = buffer.get();
@@ -74,6 +75,20 @@ public class Lobby {
         }
     }
 
+    public void removeOpponent() {
+        if (clientRole == GUEST) hostName = guestName;
+        clientRole = HOST;
+        guestName = "";
+        guestReady = false;
+        Platform.runLater(() -> {
+            Connect4Application.loadScene("lobby.fxml");
+            controller = (LobbyController) Connect4Application.currController;
+            controller.setGuestReady(false);
+            controller.guestName.setText("");
+            controller.setUpLobbyForHost(this);
+        });
+    }
+
     private String getNameFromBuffer(ByteBuffer buffer) {
         StringBuilder name = new StringBuilder();
         while (buffer.hasRemaining()) {
@@ -100,7 +115,6 @@ public class Lobby {
 
     public void setIncrement(byte increment) {
         this.increment = increment;
-        System.out.println("Increment set");
         Platform.runLater(() -> controller.increment.setText(increment + ""));
     }
 

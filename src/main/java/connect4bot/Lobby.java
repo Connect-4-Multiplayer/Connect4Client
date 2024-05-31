@@ -13,8 +13,9 @@ public class Lobby {
 
     // Next orders
     private static final byte ALTERNATING = 0;
-    private static final byte RANDOM = 1;
+//    private static final byte RANDOM = 1;
 
+    public short code;
     public byte isPublic;
     public int clientRole = GUEST;
     public int turnOrder = INIT_RANDOM;
@@ -22,11 +23,12 @@ public class Lobby {
     public short startTime = 180;
     public byte increment = 0;
     public boolean isUnlimited = false;
-    public short code;
-    public String hostName;
-    public String guestName;
+
+    public String hostName = "";
+    public String guestName = "";
     public boolean hostReady;
     public boolean guestReady;
+
     public LobbyController controller;
 
     public Lobby(short code) {
@@ -40,14 +42,13 @@ public class Lobby {
         turnOrder = buffer.get();
         nextOrder = buffer.get();
         increment = buffer.get();
-        if (buffer.get() == 1) isUnlimited = true;
+        if (buffer.get() != 0) isUnlimited = true;
         startTime = (short) (((buffer.get() & 255) << 8) + (buffer.get() & 255));
         hostName = getNameFromBuffer(buffer);
         this.guestName = guestName;
     }
 
     public String startTimeString() {
-        System.out.println("Start Time: " + startTime);
         int seconds = startTime % 60;
         return (startTime / 60) + (seconds < 10 ? ":0" : ":") + seconds;
     }
@@ -84,6 +85,7 @@ public class Lobby {
             Connect4Application.loadScene("lobby.fxml");
             controller = (LobbyController) Connect4Application.currController;
             controller.setGuestReady(false);
+            controller.hostName.setText(hostName);
             controller.guestName.setText("");
             controller.setUpLobbyForHost(this);
         });
@@ -110,12 +112,12 @@ public class Lobby {
 
     public void setStartTime(short startTime) {
         this.startTime = startTime;
-        Platform.runLater(() -> controller.startTime.setText(startTimeString()));
+        if (clientRole == GUEST) Platform.runLater(() -> controller.startTime.setText(startTimeString()));
     }
 
     public void setIncrement(byte increment) {
         this.increment = increment;
-        Platform.runLater(() -> controller.increment.setText(increment + ""));
+        if (clientRole == GUEST) Platform.runLater(() -> controller.increment.setText(increment + ""));
     }
 
     public void setUnlimited(byte isUnlimited) {

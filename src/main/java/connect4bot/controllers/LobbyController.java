@@ -52,9 +52,10 @@ public class LobbyController extends Controller {
     }
 
     public void setUpLobbyForHost(Lobby lobby) {
-        codeLabel.setText("Code: " + client.lobby.code);
-        codeLabel.setVisible(true);
-        hostName.textProperty().addListener((unused0, unused1, name) -> new PlayerInput().sendName(name));
+        hostName.textProperty().addListener((unused0, unused1, name) -> {
+            client.lobby.hostName = name;
+            new PlayerInput().sendName(name);
+        });
         guestName.setEditable(false);
 
         startTime.textProperty().addListener((unused0, unused1, unused2) -> this.changeStartTime());
@@ -73,7 +74,10 @@ public class LobbyController extends Controller {
     public void setUpLobbyForGuest(Lobby lobby) {
         codeLabel.setVisible(false);
         hostName.setEditable(false);
-        guestName.textProperty().addListener((unused0, unused1, name) -> new PlayerInput().sendName(name));
+        guestName.textProperty().addListener((unused0, unused1, name) -> {
+            client.lobby.guestName = name;
+            new PlayerInput().sendName(name);
+        });
 
         startTime.setEditable(false);
         increment.setEditable(false);
@@ -86,6 +90,9 @@ public class LobbyController extends Controller {
     }
 
     private void setSettings(Lobby lobby) {
+        codeLabel.setText("Code: " + client.lobby.code);
+        codeLabel.setVisible(true);
+
         hostName.setText(lobby.hostName);
         guestName.setText(lobby.guestName);
 

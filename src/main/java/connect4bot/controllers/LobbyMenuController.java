@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import connect4bot.message.LobbyJoin;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,7 +20,7 @@ public class LobbyMenuController extends Controller implements Initializable {
         new LobbyJoin().sendCreatePrivateRequest();
     }
 
-    public void submitForm() throws IOException {
+    public void submitForm() {
         new LobbyJoin().sendRequest(Short.parseShort(lobbyCode.getText(), 16));
     }
 

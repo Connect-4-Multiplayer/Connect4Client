@@ -9,7 +9,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -25,6 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+
+import static connect4bot.Connect4Application.client;
 
 /**
  * Controllers the gui elements used when playing a game
@@ -60,11 +61,6 @@ public class Connect4Controller extends Controller implements Initializable {
     private static final byte WIN = 0, LOSS = 1, DRAW = 2, NOT_OVER = 3;
     private final Circle[] board = new Circle[SPOTS];
     /**
-     * Highlights the spot where the user's piece will fall
-     */
-    @FXML
-    private Circle moveMarker;
-    /**
      * Background of the scene
      */
     @FXML
@@ -98,23 +94,25 @@ public class Connect4Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Connect4Application.currController = this;
-        moveMarker.setFill(Color.RED);
-        Shape board = new Rectangle(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT);
+//        Shape board = new Rectangle(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT);
         for (int c = 0; c < COLUMNS; c++) {
+            Shape column = new Rectangle(0, 0, CELL_WIDTH, BOARD_HEIGHT);
             for (int r = 0; r < ROWS; r++) {
-                board = Shape.subtract(board, getPiece(Color.WHITE, BOARD_X + CELL_WIDTH * (c + 0.5), BOARD_Y + CELL_HEIGHT * (r + 0.5)));
+                column = Shape.subtract(column, getPiece(Color.WHITE,CELL_WIDTH / 2.0,  CELL_HEIGHT * (r + 0.5)));
             }
-            Pane colPane = new Pane();
+            column.setFill(Color.BLUE);
+            Pane colPane = new Pane(column);
             try {
-                configureMouseEvents(colPane, c);
-            } catch (IOException | ExecutionException | InterruptedException e) {
+                configureMouseEvents(colPane, column, c);
+            }
+            catch (IOException | ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
             grid.add(colPane, c, 0);
         }
-        board.setFill(Color.BLUE);
-        board.setMouseTransparent(true);
-        backGround.getChildren().add(board);
+//        board.setFill(Color.BLUE);
+//        board.setMouseTransparent(true);
+//        backGround.getChildren().add(board);
     }
 
     /**
@@ -122,22 +120,12 @@ public class Connect4Controller extends Controller implements Initializable {
      * @param colPane The Pane containing the column
      * @param col     The index of the column
      */
-    private void configureMouseEvents(Pane colPane, int col) throws IOException, ExecutionException, InterruptedException {
-        colPane.setOnMouseEntered(e -> {
-            moveMarker.setCenterX(BOARD_X + CELL_WIDTH * (0.5 + col));
-            moveMarker.setCenterY(BOARD_Y + BOARD_HEIGHT - CELL_HEIGHT * (0.5 + 0));
-            moveMarker.setVisible(true);
-        });
-        colPane.setOnMouseExited(e -> moveMarker.setVisible(false));
+    private void configureMouseEvents(Pane colPane, Shape column, int col) throws IOException, ExecutionException, InterruptedException {
+        colPane.setOnMouseEntered(e -> column.setFill(Color.LIGHTBLUE));
+        colPane.setOnMouseExited(e -> column.setFill(Color.BLUE));
         colPane.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                new Move().sendMove((byte) col);
-                System.out.println("Primary");
-            }
-            else {
-                new Move().sendDeletePreMove();
-                System.out.println("Secondary");
-            }
+            if (e.getButton() == MouseButton.PRIMARY) new Move().sendMove((byte) col);
+            else new Move().sendDeletePreMove();
         });
     }
 
@@ -230,6 +218,7 @@ public class Connect4Controller extends Controller implements Initializable {
      */
     public void quit() {
         new PlayerInput().quit();
+        client.lobby = null;
         Connect4Application.loadScene("title.fxml");
     }
 }

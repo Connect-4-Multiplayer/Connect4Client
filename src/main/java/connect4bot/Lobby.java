@@ -17,9 +17,13 @@ public class Lobby {
 
     public short code;
     public byte isPublic;
-    public int clientRole = GUEST;
+
+    public byte clientRole = GUEST;
+    public byte clientTurn;
+
     public int turnOrder = INIT_RANDOM;
     public int nextOrder = ALTERNATING;
+
     public short startTime = 180;
     public byte increment = 0;
     public boolean isUnlimited = false;
@@ -28,6 +32,9 @@ public class Lobby {
     public String guestName = "";
     public boolean hostReady;
     public boolean guestReady;
+
+    public int hostScore = 0;
+    public int guestScore = 0;
 
     public LobbyController controller;
 
@@ -96,7 +103,7 @@ public class Lobby {
         while (buffer.hasRemaining()) {
             name.append((char) ((buffer.get() << 8) + buffer.get()));
         }
-        return name.toString();
+        return name.toString().strip();
     }
 
     public void setTurnOrder(byte turnOrder) {

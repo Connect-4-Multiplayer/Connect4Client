@@ -2,10 +2,11 @@ package connect4bot.message;
 
 import connect4bot.Client;
 import connect4bot.Connect4Application;
-import connect4bot.controllers.Connect4Controller;
 import javafx.application.Platform;
 
 import java.nio.ByteBuffer;
+
+import static connect4bot.Connect4Application.client;
 
 public class GameMessage extends Message {
 
@@ -18,14 +19,13 @@ public class GameMessage extends Message {
     @Override
     public void process(Client client, ByteBuffer buffer) {
         switch (buffer.get()) {
-            case START -> startGame();
+            case START -> startGame(buffer.get());
             case RESIGN -> System.out.println();
         }
     }
 
-    private void startGame() {
-        Platform.runLater(() -> {
-            Connect4Application.loadScene("connect4.fxml");
-        });
+    private void startGame(byte turn) {
+        client.lobby.clientTurn = turn;
+        Platform.runLater(() -> Connect4Application.loadScene("connect4.fxml"));
     }
 }

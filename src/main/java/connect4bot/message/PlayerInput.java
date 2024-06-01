@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import static connect4bot.Connect4Application.client;
 
 public class PlayerInput extends Message {
-    static final byte CHANGE_NAME = 0, TOGGLE_READY = 1, RESIGN = 2, RETURN_TO_LOBBY = 3, QUIT = 4;
+    static final byte CHANGE_NAME = 0, TOGGLE_READY = 1, QUIT = 2;
     static final int MAX_NAME_LENGTH = 64;
 
     public PlayerInput() {
@@ -35,10 +35,7 @@ public class PlayerInput extends Message {
         switch (selection) {
             case CHANGE_NAME -> client.lobby.updateOpponentName(buffer);
             case TOGGLE_READY -> client.lobby.toggleReady(buffer.get());
-            case QUIT -> {
-                System.out.println("quit");
-                client.lobby.removeOpponent();
-            }
+            case QUIT -> client.lobby.removeOpponent();
         }
     }
 }

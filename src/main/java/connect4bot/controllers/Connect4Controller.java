@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -26,6 +27,8 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static connect4bot.Connect4Application.client;
+import static connect4bot.Lobby.GUEST;
+import static connect4bot.Lobby.HOST;
 
 /**
  * Controllers the gui elements used when playing a game
@@ -38,7 +41,7 @@ public class Connect4Controller extends Controller implements Initializable {
     /**
      * Dimensions of the board
      */
-    private static final int BOARD_WIDTH = 462, BOARD_HEIGHT = 336, BOARD_X = 144, BOARD_Y = 70;
+    private static final int BOARD_WIDTH = 462, BOARD_HEIGHT = 336, BOARD_X = 144, BOARD_Y = 128;
     /**
      * Dimensions of each cell on the board
      */
@@ -50,7 +53,7 @@ public class Connect4Controller extends Controller implements Initializable {
     /**
      * Starting y location of a piece when it is dropped into the board
      */
-    private static final int DROP_START_Y = 42;
+    private static final int DROP_START_Y = 100;
     /**
      * Opacity of a faded piece
      */
@@ -59,6 +62,9 @@ public class Connect4Controller extends Controller implements Initializable {
      * Stores all spots filled during the game
      */
     private static final byte WIN = 0, LOSS = 1, DRAW = 2, NOT_OVER = 3;
+    /**
+     * All pieces currently on the board
+     */
     private final Circle[] board = new Circle[SPOTS];
     /**
      * Background of the scene
@@ -86,6 +92,15 @@ public class Connect4Controller extends Controller implements Initializable {
     @FXML
     private Label message;
 
+    @FXML
+    private Label hostName;
+    @FXML
+    private Label guestName;
+    @FXML
+    private TextField hostScore;
+    @FXML
+    private TextField guestScore;
+
     /**
      * Initializes the gui elements for starting the game
      * @param url            N/A
@@ -94,7 +109,6 @@ public class Connect4Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Connect4Application.currController = this;
-//        Shape board = new Rectangle(BOARD_X, BOARD_Y, BOARD_WIDTH, BOARD_HEIGHT);
         for (int c = 0; c < COLUMNS; c++) {
             Shape column = new Rectangle(0, 0, CELL_WIDTH, BOARD_HEIGHT);
             for (int r = 0; r < ROWS; r++) {
@@ -110,9 +124,8 @@ public class Connect4Controller extends Controller implements Initializable {
             }
             grid.add(colPane, c, 0);
         }
-//        board.setFill(Color.BLUE);
-//        board.setMouseTransparent(true);
-//        backGround.getChildren().add(board);
+        hostName.setText(client.lobby.hostName);
+        guestName.setText(client.lobby.guestName);
     }
 
     /**
@@ -136,7 +149,7 @@ public class Connect4Controller extends Controller implements Initializable {
         final byte col = args[0], colHeight = args[1], color = args[2],
                 gameState = args[3], winningSpot = args[4], winInc = args[5];
         Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
-        board[col * 6 + colHeight] = piece;
+        board[col * ROWS + colHeight] = piece;
         backGround.getChildren().add(piece);
         piece.toBack();
 
@@ -146,16 +159,24 @@ public class Connect4Controller extends Controller implements Initializable {
             if (gameState != NOT_OVER) {
                 message.setVisible(true);
                 endOptions.setVisible(true);
-            }
-            if (gameState == DRAW) {
-                message.setText("Draw!");
-            }
-            else if (gameState != NOT_OVER) {
-                highlightWin(winningSpot, winInc);
-                if (gameState == WIN) {
-                    message.setText("You Win!");
+                if (gameState == DRAW) message.setText("Draw!");
+                else {
+                    highlightWin(winningSpot, winInc);
+                    byte winner = client.lobby.clientRole;
+                    if (gameState == WIN) message.setText("You Win!");
+                    else {
+                        message.setText("You Lose!");
+                        winner = (byte) (client.lobby.clientRole ^ 1);
+                    }
+                    if (winner == HOST) {
+                        client.lobby.hostScore++;
+                        hostScore.setText(client.lobby.hostScore + "");
+                    }
+                    else {
+                        client.lobby.guestScore++;
+                        hostScore.setText(client.lobby.guestScore + "");
+                    }
                 }
-                else message.setText("You Lose!");
             }
         });
         drop.play();

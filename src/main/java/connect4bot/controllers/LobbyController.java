@@ -90,7 +90,7 @@ public class LobbyController extends Controller {
     }
 
     private void setSettings(Lobby lobby) {
-        codeLabel.setText("Code: " + client.lobby.code);
+        codeLabel.setText("Lobby Code: " + client.lobby.code);
         codeLabel.setVisible(true);
 
         hostName.setText(lobby.hostName);
@@ -105,17 +105,11 @@ public class LobbyController extends Controller {
     }
 
     public void changeStartTime() {
-        try {
-            String[] time = startTime.getText().split(":");
-            new SetSetting().sendStartTime((short)
-                    (Short.parseShort(time[0].strip()) * 60
-                    + Short.parseShort(time[1].strip()))
-            );
-            System.out.println("Legal start time");
-        }
-        catch (Exception e) {
-            System.out.println("Invalid start time");
-        }
+        String[] time = startTime.getText().split(":");
+        new SetSetting().sendStartTime((short)
+                (Short.parseShort(time[0].strip()) * 60
+                + Short.parseShort(time[1].strip()))
+        );
     }
 
     public void changeIncrement() {
@@ -143,5 +137,11 @@ public class LobbyController extends Controller {
     public void setGuestReady(boolean ready) {
         guestReady.setVisible(ready);
         if (client.lobby.clientRole == GUEST) readyButton.setText(ready ? "Unready" : "Ready");
+    }
+
+    public void quit() {
+        new PlayerInput().quit();
+        client.lobby = null;
+        Connect4Application.loadScene("lobbyMenu.fxml");
     }
 }

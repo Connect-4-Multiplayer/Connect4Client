@@ -19,7 +19,7 @@ public class Lobby {
     public byte isPublic;
 
     public byte clientRole = GUEST;
-    public byte clientTurn;
+    public byte hostTurn;
 
     public int turnOrder = INIT_RANDOM;
     public int nextOrder = ALTERNATING;
@@ -88,6 +88,7 @@ public class Lobby {
         clientRole = HOST;
         guestName = "";
         guestReady = false;
+        hostScore = guestScore = 0;
         Platform.runLater(() -> {
             Connect4Application.loadScene("lobby.fxml");
             controller = (LobbyController) Connect4Application.currController;
@@ -103,7 +104,7 @@ public class Lobby {
         while (buffer.hasRemaining()) {
             name.append((char) ((buffer.get() << 8) + buffer.get()));
         }
-        return name.toString().strip();
+        return name.toString().replace("\0", "");
     }
 
     public void setTurnOrder(byte turnOrder) {

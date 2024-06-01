@@ -67,6 +67,14 @@ public class Connect4Controller extends Controller implements Initializable {
      */
     private final Circle[] board = new Circle[SPOTS];
     /**
+     * Host piece color
+     */
+    private Color hostColor = Color.RED;
+    /**
+     * Guest piece color
+     */
+    private Color guestColor = Color.YELLOW;
+    /**
      * Background of the scene
      */
     @FXML
@@ -116,16 +124,13 @@ public class Connect4Controller extends Controller implements Initializable {
             }
             column.setFill(Color.BLUE);
             Pane colPane = new Pane(column);
-            try {
-                configureMouseEvents(colPane, column, c);
-            }
-            catch (IOException | ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            configureMouseEvents(colPane, column, c);
             grid.add(colPane, c, 0);
         }
         hostName.setText(client.lobby.hostName);
         guestName.setText(client.lobby.guestName);
+        hostScore.setText(client.lobby.hostScore + "");
+        guestScore.setText(client.lobby.guestScore + "");
     }
 
     /**
@@ -133,7 +138,7 @@ public class Connect4Controller extends Controller implements Initializable {
      * @param colPane The Pane containing the column
      * @param col     The index of the column
      */
-    private void configureMouseEvents(Pane colPane, Shape column, int col) throws IOException, ExecutionException, InterruptedException {
+    private void configureMouseEvents(Pane colPane, Shape column, int col) {
         colPane.setOnMouseEntered(e -> column.setFill(Color.LIGHTBLUE));
         colPane.setOnMouseExited(e -> column.setFill(Color.BLUE));
         colPane.setOnMouseClicked(e -> {
@@ -148,7 +153,7 @@ public class Connect4Controller extends Controller implements Initializable {
     public void playMove(byte[] args) {
         final byte col = args[0], colHeight = args[1], color = args[2],
                 gameState = args[3], winningSpot = args[4], winInc = args[5];
-        Circle piece = getPiece(color == 1 ? Color.RED : Color.YELLOW, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
+        Circle piece = getPiece(color == client.lobby.hostTurn ? hostColor : guestColor, BOARD_X + CELL_WIDTH / 2d + CELL_WIDTH * col, DROP_START_Y);
         board[col * ROWS + colHeight] = piece;
         backGround.getChildren().add(piece);
         piece.toBack();
@@ -174,7 +179,7 @@ public class Connect4Controller extends Controller implements Initializable {
                     }
                     else {
                         client.lobby.guestScore++;
-                        hostScore.setText(client.lobby.guestScore + "");
+                        guestScore.setText(client.lobby.guestScore + "");
                     }
                 }
             }

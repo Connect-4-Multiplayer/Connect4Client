@@ -25,7 +25,7 @@ public class GameMessage extends Message {
     }
 
     private void startGame(byte turn) {
-        client.lobby.clientTurn = turn;
+        client.lobby.hostTurn = turn;
         Platform.runLater(() -> Connect4Application.loadScene("connect4.fxml"));
     }
 }

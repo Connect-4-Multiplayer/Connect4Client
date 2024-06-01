@@ -30,9 +30,7 @@ public class PlayerInput extends Message {
 
     @Override
     public void process(Client client, ByteBuffer buffer) {
-        System.out.println("got player selection");
-        byte selection = buffer.get();
-        switch (selection) {
+        switch (buffer.get()) {
             case CHANGE_NAME -> client.lobby.updateOpponentName(buffer);
             case TOGGLE_READY -> client.lobby.toggleReady(buffer.get());
             case QUIT -> client.lobby.removeOpponent();
